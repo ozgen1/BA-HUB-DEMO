@@ -1,0 +1,1753 @@
+<title>BA Hub</title>
+<style>
+  :root{
+    --bg:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec; --surface-hover:#eeece5;
+    --text:#0b0b0b; --text-2:#52514e; --muted:#898781;
+    --border:rgba(11,11,11,.10); --border-strong:rgba(11,11,11,.16);
+    --accent:#2a78d6; --accent-ink:#ffffff; --accent-wash:#e8f0fb;
+    --series-2:#eb6834; --series-3:#1baf7a; --series-4:#eda100; --series-5:#e87ba4; --series-6:#4a3aa7;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --grid:#e1e0d9; --axis:#c3c2b7;
+    --shadow:0 1px 2px rgba(11,11,11,.05),0 8px 24px -12px rgba(11,11,11,.18);
+    --radius-s:6px; --radius-m:10px; --radius-l:16px;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d0d0d; --surface:#1a1a19; --surface-2:#202020; --surface-hover:#262625;
+      --text:#ffffff; --text-2:#c3c2b7; --muted:#898781;
+      --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
+      --accent:#3987e5; --accent-ink:#ffffff; --accent-wash:#152a41;
+      --series-2:#d95926; --series-3:#199e70; --series-4:#c98500; --series-5:#d55181; --series-6:#9085e9;
+      --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+      --grid:#2c2c2a; --axis:#383835;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d0d0d; --surface:#1a1a19; --surface-2:#202020; --surface-hover:#262625;
+    --text:#ffffff; --text-2:#c3c2b7; --muted:#898781;
+    --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
+    --accent:#3987e5; --accent-ink:#ffffff; --accent-wash:#152a41;
+    --series-2:#d95926; --series-3:#199e70; --series-4:#c98500; --series-5:#d55181; --series-6:#9085e9;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --grid:#2c2c2a; --axis:#383835;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.5);
+    color-scheme:dark;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&display=swap');
+
+  *,*::before,*::after{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.font-display{font-family:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif}
+  .tnum{font-variant-numeric:tabular-nums}
+  a{color:inherit}
+  button{font:inherit}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+
+  /* ---------- layout shell ---------- */
+  .app{display:flex;min-height:100dvh;width:100%}
+  .sidebar{
+    width:252px;flex:0 0 252px;background:var(--surface);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;gap:4px;padding:16px 12px;position:sticky;top:0;
+    height:100dvh;overflow-y:auto;
+  }
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px}
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;background:linear-gradient(155deg,var(--accent),var(--series-6));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Outfit";font-weight:700;font-size:14px;flex:none;
+  }
+  .brand-text{display:flex;flex-direction:column;line-height:1.15}
+  .brand-text b{font-family:"Outfit";font-weight:700;font-size:15px;letter-spacing:.01em}
+  .brand-text span{font-size:11px;color:var(--muted)}
+
+  .nav-group{display:flex;flex-direction:column;gap:1px;margin-bottom:10px}
+  .nav-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:10px 10px 4px}
+  .nav-item{
+    display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-s);
+    font-size:13.5px;color:var(--text-2);cursor:pointer;border:none;background:none;text-align:left;width:100%;
+  }
+  .nav-item:hover{background:var(--surface-hover);color:var(--text)}
+  .nav-item.active{background:var(--accent-wash);color:var(--accent);font-weight:600}
+  .nav-item .ico{width:16px;height:16px;flex:none;opacity:.85}
+  .nav-sub{display:flex;flex-direction:column;gap:1px;margin-left:14px;padding-left:10px;border-left:1px solid var(--border);margin-bottom:6px}
+  .nav-sub .nav-item{font-size:12.5px;padding:6px 10px}
+  .nav-chevron{margin-left:auto;font-size:10px;opacity:.6;transition:transform .15s}
+  .nav-chevron.open{transform:rotate(90deg)}
+
+  .sidebar-foot{margin-top:auto;padding:10px 8px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+  .db-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--good)}
+  .db-dot.off{background:var(--muted)}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{
+    position:sticky;top:0;z-index:5;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;gap:14px;min-height:60px;
+  }
+  .hamburger{display:none;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-s);width:34px;height:34px;align-items:center;justify-content:center;cursor:pointer;flex:none}
+  .topbar-title{font-family:"Outfit";font-weight:600;font-size:19px}
+  .topbar-sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+  .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+
+  .content{padding:24px 28px 64px;flex:1}
+  .content-inner{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+
+  /* ---------- primitives ---------- */
+  .select, .input, textarea.input{
+    border:1px solid var(--border-strong);background:var(--surface);color:var(--text);border-radius:var(--radius-s);
+    padding:7px 10px;font-size:13px;font-family:inherit;
+  }
+  select.select{padding-right:26px}
+  .input:focus, .select:focus, textarea.input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  label.field-label{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:5px;display:block}
+  .field{display:flex;flex-direction:column;margin-bottom:12px}
+  .field-row{display:flex;gap:12px;flex-wrap:wrap}
+  .field-row .field{flex:1;min-width:160px}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--radius-s);
+    padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;white-space:nowrap;
+  }
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-ghost{background:transparent;border-color:var(--border-strong);color:var(--text)}
+  .btn-ghost:hover{background:var(--surface-hover)}
+  .btn-danger{background:transparent;border-color:var(--critical);color:var(--critical)}
+  .btn-danger:hover{background:color-mix(in srgb, var(--critical) 12%, transparent)}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .icon-btn{border:1px solid var(--border-strong);background:var(--surface);border-radius:var(--radius-s);width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-2)}
+  .icon-btn:hover{background:var(--surface-hover);color:var(--text)}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-l);padding:18px 20px}
+  .card-title{font-family:"Outfit";font-weight:600;font-size:15px;margin-bottom:2px}
+  .card-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+
+  .grid-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:14px}
+  .grid-2b{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:980px){.grid-kpi{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-2b{grid-template-columns:1fr}}
+
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-l);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+  .kpi-label{font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between}
+  .kpi-value{font-size:28px;font-weight:700;line-height:1}
+  .kpi-delta{font-size:11.5px;color:var(--text-2)}
+  .kpi-delta.good{color:var(--good)}
+  .kpi-delta.critical{color:var(--critical)}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+  .badge .dot{width:6px;height:6px;border-radius:50%;flex:none;background:currentColor}
+  .badge-neutral{background:var(--surface-2);color:var(--text-2);border-color:var(--border)}
+  .badge-accent{background:var(--accent-wash);color:var(--accent)}
+  .badge-good{background:color-mix(in srgb, var(--good) 14%, transparent);color:var(--good)}
+  .badge-warning{background:color-mix(in srgb, var(--warning) 20%, transparent);color:#8a5a00}
+  .badge-serious{background:color-mix(in srgb, var(--serious) 18%, transparent);color:#a1391a}
+  .badge-critical{background:color-mix(in srgb, var(--critical) 14%, transparent);color:var(--critical)}
+  .badge-priority-high{background:color-mix(in srgb, var(--critical) 14%, transparent);color:var(--critical)}
+  .badge-priority-medium{background:color-mix(in srgb, var(--warning) 20%, transparent);color:#8a5a00}
+  .badge-priority-low{background:var(--surface-2);color:var(--text-2)}
+  /* warning/serious/priority-medium text uses a manually-darkened shade in light
+     mode for AA-ish contrast (the raw status hues are too light on a light
+     surface per spec); in dark mode the token itself already contrasts, so the
+     dark overrides below restore it. */
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]) .badge-warning,
+    :root:not([data-theme="light"]) .badge-priority-medium{color:var(--warning)}
+    :root:not([data-theme="light"]) .badge-serious{color:var(--serious)}
+  }
+  :root[data-theme="dark"] .badge-warning, :root[data-theme="dark"] .badge-priority-medium{color:var(--warning)}
+  :root[data-theme="dark"] .badge-serious{color:var(--serious)}
+
+  table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+  table.tbl th{
+    text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+    font-weight:600;padding:0 12px 8px;border-bottom:1px solid var(--border);white-space:nowrap;
+  }
+  table.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+  table.tbl tbody tr:hover{background:var(--surface-hover)}
+  table.tbl tbody tr:last-child td{border-bottom:none}
+  .tbl-wrap{overflow-x:auto;margin:0 -2px}
+  .cell-muted{color:var(--muted)}
+  .cell-strong{font-weight:600}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end}
+  .empty-state{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
+
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .toolbar .spacer{flex:1}
+  .chip{border:1px solid var(--border-strong);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer;color:var(--text-2)}
+  .chip:hover{background:var(--surface-hover)}
+  .chip.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+  .tab{padding:9px 4px;margin-right:18px;font-size:13px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--accent);border-color:var(--accent)}
+
+  /* bar chart */
+  .barchart{display:flex;flex-direction:column;gap:10px}
+  .barchart .row{display:grid;grid-template-columns:120px 1fr 44px;gap:10px;align-items:center;font-size:12.5px}
+  .barchart .row .lbl{color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .barchart .track{height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;position:relative}
+  .barchart .fill{height:100%;border-radius:999px}
+  .barchart .val{text-align:right;font-weight:600}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--text-2);margin-top:4px}
+  .legend .item{display:flex;align-items:center;gap:6px}
+  .legend .sw{width:9px;height:9px;border-radius:3px;flex:none}
+
+  .ring-wrap{display:flex;align-items:center;gap:16px}
+  .ring{
+    width:96px;height:96px;border-radius:50%;flex:none;position:relative;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .ring::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--surface)}
+  .ring b{position:relative;font-size:19px;font-weight:700}
+
+  /* process flow */
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 0}
+  .flow-node{
+    border:1px solid var(--border-strong);background:var(--surface);border-radius:var(--radius-m);
+    padding:10px 16px;font-size:12.5px;text-align:center;max-width:260px;box-shadow:var(--shadow);
+  }
+  .flow-node.start,.flow-node.end{border-radius:999px;background:var(--accent-wash);border-color:var(--accent);color:var(--accent);font-weight:600}
+  .flow-node.decision{background:var(--surface-2);border-style:dashed;font-weight:600}
+  .flow-connector{width:2px;height:22px;background:var(--axis)}
+  .flow-connector.arrow{position:relative}
+  .flow-connector.arrow::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--axis)}
+  .flow-branch-wrap{display:flex;gap:28px;align-items:flex-start;width:100%;justify-content:center}
+  .flow-branch{display:flex;flex-direction:column;align-items:center;flex:1;max-width:300px}
+  .flow-branch-label{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+
+  /* sql console */
+  .sql-editor{width:100%;min-height:110px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;resize:vertical}
+  .sql-result-meta{font-size:12px;color:var(--muted);display:flex;gap:14px;margin:10px 0}
+  .sql-error{background:color-mix(in srgb, var(--critical) 10%, transparent);border:1px solid var(--critical);color:var(--critical);border-radius:var(--radius-s);padding:10px 12px;font-size:12.5px;font-family:ui-monospace,monospace}
+  .schema-list{display:flex;flex-direction:column;gap:10px}
+  .schema-table{border:1px solid var(--border);border-radius:var(--radius-s);overflow:hidden}
+  .schema-table-head{background:var(--surface-2);padding:7px 10px;font-size:12.5px;font-weight:700;font-family:ui-monospace,monospace}
+  .schema-cols{padding:8px 10px;display:flex;flex-wrap:wrap;gap:5px}
+  .schema-col{font-size:11px;font-family:ui-monospace,monospace;background:var(--surface-2);padding:2px 7px;border-radius:5px;color:var(--text-2)}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(11,11,11,.42);display:flex;align-items:flex-start;justify-content:center;z-index:50;padding:5vh 16px;overflow-y:auto}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-l);width:100%;max-width:560px;box-shadow:var(--shadow);margin-bottom:5vh}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
+  .modal-title{font-family:"Outfit";font-weight:600;font-size:16px}
+  .modal-body{padding:18px 20px;max-height:65vh;overflow-y:auto}
+  .modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+
+  /* toast */
+  .toast-stack{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:80}
+  .toast{background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--radius-s);font-size:13px;box-shadow:var(--shadow);max-width:320px}
+  .toast.error{background:var(--critical);color:#fff}
+
+  .link-btn{background:none;border:none;color:var(--accent);font-weight:600;font-size:12.5px;cursor:pointer;padding:0}
+  .divider{height:1px;background:var(--border);margin:4px 0}
+  .muted{color:var(--muted)}
+  .mb-0{margin-bottom:0}
+  .flex{display:flex}
+  .items-center{align-items:center}
+  .gap-8{gap:8px}
+  .w-full{width:100%}
+  code.inline{font-family:ui-monospace,monospace;background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:12px}
+
+  @media (max-width:860px){
+    .sidebar{position:fixed;left:0;top:0;z-index:40;transform:translateX(-100%);transition:transform .18s ease;box-shadow:var(--shadow)}
+    body.nav-open .sidebar{transform:translateX(0)}
+    body.nav-open::after{content:"";position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:30}
+    .hamburger{display:inline-flex}
+    .content{padding:18px 16px 48px}
+    .topbar{padding:12px 16px}
+    .grid-kpi{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:480px){
+    .grid-kpi{grid-template-columns:1fr}
+    .modal{max-width:100%}
+  }
+</style>
+<div class="app">
+  <aside class="sidebar" id="sidebar"><!--NAV--></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menüyü aç">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+        <div class="topbar-sub" id="topbarSub"></div>
+      </div>
+      <div class="topbar-actions" id="topbarActions"></div>
+    </div>
+    <div class="content"><div class="content-inner" id="mainContent"><!--MAIN--></div></div>
+  </div>
+</div>
+<div id="modalRoot"></div>
+<div class="toast-stack" id="toastStack"></div>
+<script>// MiniSQL — a small, dependency-free SQL subset engine for BA HUB's SQL/Data console.
+// Supports: SELECT cols|* FROM table [[INNER|LEFT] JOIN table2 ON a.col = b.col]
+//           [WHERE cond] [ORDER BY col [ASC|DESC]] [LIMIT n]
+// cond: comparisons (= != <> > >= < <=), LIKE '%x%', IN (a,b,c), IS [NOT] NULL,
+//       combined with AND / OR (AND binds tighter), parens for grouping, NOT prefix.
+
+(function (global) {
+  'use strict';
+
+  // ---------- Tokenizer ----------
+  const TOKEN_RE = /\s*(=>|<>|>=|<=|!=|[(),=<>*]|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|[A-Za-z_][A-Za-z0-9_.]*|-?\d+\.\d+|-?\d+)\s*/y;
+
+  function tokenize(sql) {
+    const tokens = [];
+    let i = 0;
+    TOKEN_RE.lastIndex = 0;
+    while (i < sql.length) {
+      TOKEN_RE.lastIndex = i;
+      const m = TOKEN_RE.exec(sql);
+      if (!m || m[0].length === 0) {
+        if (/\s/.test(sql[i])) { i++; continue; }
+        throw new SqlError(`Beklenmeyen karakter: "${sql[i]}" (konum ${i})`);
+      }
+      tokens.push(m[1]);
+      i += m[0].length;
+    }
+    return tokens;
+  }
+
+  class SqlError extends Error {}
+
+  // ---------- Parser ----------
+  // Produces an AST: { type:'select', columns:[{expr, alias}], from:{table, alias},
+  //   join: {kind, table, alias, on:{left,right}} | null, where: <expr>|null,
+  //   orderBy: {col, dir} | null, limit: n | null }
+
+  function parse(sql) {
+    const raw = tokenize(sql);
+    let pos = 0;
+    const peek = () => raw[pos];
+    const peekUpper = () => (raw[pos] || '').toUpperCase();
+    const next = () => raw[pos++];
+    const expectUpper = (word) => {
+      if (peekUpper() !== word) throw new SqlError(`"${word}" bekleniyordu, "${peek() ?? '(sorgu sonu)'}" bulundu`);
+      return next();
+    };
+    const isString = (t) => t && ((t[0] === "'" && t[t.length - 1] === "'") || (t[0] === '"' && t[t.length - 1] === '"'));
+    const unquote = (t) => t.slice(1, -1).replace(/\\(.)/g, '$1');
+    const isNumber = (t) => t && /^-?\d+(\.\d+)?$/.test(t);
+    const isIdent = (t) => t && /^[A-Za-z_][A-Za-z0-9_.]*$/.test(t);
+
+    if (peekUpper() !== 'SELECT') throw new SqlError('Sorgu SELECT ile başlamalı');
+    next();
+
+    // columns
+    const columns = [];
+    if (peek() === '*') { next(); columns.push({ star: true }); }
+    else {
+      while (true) {
+        const t = next();
+        if (!isIdent(t)) throw new SqlError(`Sütun adı bekleniyordu: "${t}"`);
+        let alias = null;
+        if (peekUpper() === 'AS') { next(); alias = next(); }
+        columns.push({ expr: t, alias });
+        if (peek() === ',') { next(); continue; }
+        break;
+      }
+    }
+
+    expectUpper('FROM');
+    const fromTable = next();
+    if (!isIdent(fromTable)) throw new SqlError('Tablo adı bekleniyordu');
+    let fromAlias = fromTable;
+    if (peekUpper() === 'AS') { next(); fromAlias = next(); }
+    else if (isIdent(peek()) && !['WHERE', 'ORDER', 'LIMIT', 'JOIN', 'INNER', 'LEFT'].includes(peekUpper())) {
+      fromAlias = next();
+    }
+
+    let join = null;
+    let joinKind = null;
+    if (peekUpper() === 'INNER' || peekUpper() === 'LEFT') {
+      joinKind = peekUpper() === 'LEFT' ? 'LEFT' : 'INNER';
+      next();
+      expectUpper('JOIN');
+    } else if (peekUpper() === 'JOIN') {
+      joinKind = 'INNER';
+      next();
+    }
+    if (joinKind) {
+      const jt = next();
+      if (!isIdent(jt)) throw new SqlError('JOIN için tablo adı bekleniyordu');
+      let ja = jt;
+      if (peekUpper() === 'AS') { next(); ja = next(); }
+      else if (isIdent(peek()) && peekUpper() !== 'ON') { ja = next(); }
+      expectUpper('ON');
+      const left = next();
+      expectUpper2eq();
+      const right = next();
+      join = { kind: joinKind, table: jt, alias: ja, on: { left, right } };
+    }
+    function expectUpper2eq() {
+      if (peek() !== '=') throw new SqlError('JOIN ON ifadesinde "=" bekleniyordu');
+      next();
+    }
+
+    let where = null;
+    if (peekUpper() === 'WHERE') {
+      next();
+      where = parseOr();
+    }
+
+    let orderBy = null;
+    if (peekUpper() === 'ORDER') {
+      next();
+      expectUpper('BY');
+      const col = next();
+      let dir = 'ASC';
+      if (peekUpper() === 'ASC' || peekUpper() === 'DESC') dir = next().toUpperCase();
+      orderBy = { col, dir };
+    }
+
+    let limit = null;
+    if (peekUpper() === 'LIMIT') {
+      next();
+      const n = next();
+      if (!isNumber(n)) throw new SqlError('LIMIT sayısal olmalı');
+      limit = parseInt(n, 10);
+    }
+
+    if (pos < raw.length) throw new SqlError(`Beklenmeyen fazladan ifade: "${raw[pos]}"`);
+
+    return { columns, from: { table: fromTable, alias: fromAlias }, join, where, orderBy, limit };
+
+    // ---- expression parsing (AND/OR, NOT, parens, comparisons) ----
+    function parseOr() {
+      let left = parseAnd();
+      while (peekUpper() === 'OR') { next(); left = { op: 'OR', left, right: parseAnd() }; }
+      return left;
+    }
+    function parseAnd() {
+      let left = parseNot();
+      while (peekUpper() === 'AND') { next(); left = { op: 'AND', left, right: parseNot() }; }
+      return left;
+    }
+    function parseNot() {
+      if (peekUpper() === 'NOT') { next(); return { op: 'NOT', expr: parseNot() }; }
+      return parseComparison();
+    }
+    function parseComparison() {
+      if (peek() === '(') {
+        next();
+        const e = parseOr();
+        if (peek() !== ')') throw new SqlError('Kapanış parantezi ")" bekleniyordu');
+        next();
+        return e;
+      }
+      const colTok = next();
+      if (!isIdent(colTok)) throw new SqlError(`Sütun adı bekleniyordu: "${colTok}"`);
+      const opUpper = peekUpper();
+      if (opUpper === 'IS') {
+        next();
+        let notNull = false;
+        if (peekUpper() === 'NOT') { next(); notNull = true; }
+        expectUpper('NULL');
+        return { op: notNull ? 'IS NOT NULL' : 'IS NULL', col: colTok };
+      }
+      if (opUpper === 'LIKE') {
+        next();
+        const val = next();
+        if (!isString(val)) throw new SqlError('LIKE bir metin bekler');
+        return { op: 'LIKE', col: colTok, value: unquote(val) };
+      }
+      if (opUpper === 'IN') {
+        next();
+        if (peek() !== '(') throw new SqlError('IN sonrası "(" bekleniyordu');
+        next();
+        const vals = [];
+        while (true) {
+          const v = next();
+          vals.push(literal(v));
+          if (peek() === ',') { next(); continue; }
+          break;
+        }
+        if (peek() !== ')') throw new SqlError('IN listesi ")" ile kapanmalı');
+        next();
+        return { op: 'IN', col: colTok, values: vals };
+      }
+      const cmpOps = ['=', '!=', '<>', '>=', '<=', '>', '<'];
+      const opTok = peek();
+      if (!cmpOps.includes(opTok)) throw new SqlError(`Karşılaştırma operatörü bekleniyordu, bulunan: "${opTok}"`);
+      next();
+      const valTok = next();
+      if (valTok === undefined) throw new SqlError('Karşılaştırma için bir değer bekleniyordu');
+      let value;
+      if (isString(valTok)) value = unquote(valTok);
+      else if (isNumber(valTok)) value = parseFloat(valTok);
+      else if (valTok.toUpperCase() === 'TRUE') value = true;
+      else if (valTok.toUpperCase() === 'FALSE') value = false;
+      else if (valTok.toUpperCase() === 'NULL') value = null;
+      else value = valTok; // bare identifier compared as string, best-effort
+      return { op: opTok === '<>' ? '!=' : opTok, col: colTok, value };
+    }
+    function literal(t) {
+      if (isString(t)) return unquote(t);
+      if (isNumber(t)) return parseFloat(t);
+      return t;
+    }
+  }
+
+  // ---------- Execution ----------
+  function coerce(v) {
+    return v === undefined ? null : v;
+  }
+
+  function getField(row, col) {
+    // supports alias.field and bare field
+    if (Object.prototype.hasOwnProperty.call(row, col)) return coerce(row[col]);
+    const dot = col.indexOf('.');
+    if (dot >= 0) {
+      const rest = col.slice(dot + 1);
+      if (Object.prototype.hasOwnProperty.call(row, rest)) return coerce(row[rest]);
+    }
+    return null;
+  }
+
+  function evalExpr(node, row) {
+    if (!node.op) return true;
+    switch (node.op) {
+      case 'AND': return !!(evalExpr(node.left, row) && evalExpr(node.right, row));
+      case 'OR': return !!(evalExpr(node.left, row) || evalExpr(node.right, row));
+      case 'NOT': return !evalExpr(node.expr, row);
+      case 'IS NULL': return getField(row, node.col) === null;
+      case 'IS NOT NULL': return getField(row, node.col) !== null;
+      case 'LIKE': {
+        const v = getField(row, node.col);
+        if (v === null) return false;
+        const pattern = '^' + node.value
+          .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+          .replace(/%/g, '.*')
+          .replace(/_/g, '.') + '$';
+        return new RegExp(pattern, 'i').test(String(v));
+      }
+      case 'IN': {
+        const v = getField(row, node.col);
+        return node.values.some((x) => String(x).toLowerCase() === String(v).toLowerCase() || x === v);
+      }
+      default: {
+        const v = getField(row, node.col);
+        const target = node.value;
+        if (v === null) return false;
+        const bothNumeric = typeof target === 'number' && !isNaN(parseFloat(v)) && v !== '' ;
+        const a = bothNumeric ? parseFloat(v) : String(v).toLowerCase();
+        const b = bothNumeric ? target : String(target).toLowerCase();
+        switch (node.op) {
+          case '=': return a === b;
+          case '!=': return a !== b;
+          case '>': return a > b;
+          case '>=': return a >= b;
+          case '<': return a < b;
+          case '<=': return a <= b;
+        }
+        return false;
+      }
+    }
+  }
+
+  function run(sql, tables) {
+    const ast = parse(sql);
+    const fromRows = tables[ast.from.table];
+    if (!fromRows) throw new SqlError(`Bilinmeyen tablo: "${ast.from.table}"`);
+
+    let joined = fromRows.map((r) => ({ __row: prefixRow(r, ast.from.alias) }));
+
+    if (ast.join) {
+      const joinRows = tables[ast.join.table];
+      if (!joinRows) throw new SqlError(`Bilinmeyen tablo: "${ast.join.table}"`);
+      const leftKey = ast.join.on.left;
+      const rightKey = ast.join.on.right;
+      const out = [];
+      for (const base of joined) {
+        const baseVal = getField(base.__row, leftKey);
+        let matched = false;
+        for (const jr of joinRows) {
+          const prefixed = prefixRow(jr, ast.join.alias);
+          const rightVal = getField(prefixed, rightKey);
+          if (baseVal !== null && rightVal !== null && String(baseVal) === String(rightVal)) {
+            matched = true;
+            out.push({ __row: Object.assign({}, base.__row, prefixed) });
+          }
+        }
+        if (!matched && ast.join.kind === 'LEFT') {
+          out.push({ __row: base.__row });
+        }
+      }
+      joined = out;
+    }
+
+    let rows = joined.map((x) => x.__row);
+
+    if (ast.where) rows = rows.filter((r) => evalExpr(ast.where, r));
+
+    if (ast.orderBy) {
+      const { col, dir } = ast.orderBy;
+      rows = rows.slice().sort((a, b) => {
+        const av = getField(a, col), bv = getField(b, col);
+        if (av === bv) return 0;
+        if (av === null) return 1;
+        if (bv === null) return -1;
+        const an = typeof av === 'number' ? av : parseFloat(av);
+        const bn = typeof bv === 'number' ? bv : parseFloat(bv);
+        let cmp;
+        if (!isNaN(an) && !isNaN(bn) && String(an) === String(av).trim() && String(bn) === String(bv).trim()) cmp = an - bn;
+        else cmp = String(av).localeCompare(String(bv), 'tr');
+        return dir === 'DESC' ? -cmp : cmp;
+      });
+    }
+
+    if (ast.limit != null) rows = rows.slice(0, ast.limit);
+
+    // project columns
+    let columns;
+    if (ast.columns.length === 1 && ast.columns[0].star) {
+      const set = new Set();
+      rows.forEach((r) => Object.keys(r).forEach((k) => set.add(k)));
+      columns = Array.from(set);
+    } else {
+      columns = ast.columns.map((c) => c.alias || simpleName(c.expr));
+    }
+
+    const out = rows.map((r) => {
+      const o = {};
+      if (ast.columns.length === 1 && ast.columns[0].star) {
+        columns.forEach((c) => { o[c] = r[c] === undefined ? null : r[c]; });
+      } else {
+        ast.columns.forEach((c) => {
+          const name = c.alias || simpleName(c.expr);
+          o[name] = getField(r, c.expr);
+        });
+      }
+      return o;
+    });
+
+    return { columns, rows: out };
+  }
+
+  function simpleName(expr) {
+    const dot = expr.indexOf('.');
+    return dot >= 0 ? expr.slice(dot + 1) : expr;
+  }
+
+  function prefixRow(row, alias) {
+    const out = Object.assign({}, row);
+    Object.keys(row).forEach((k) => { out[alias + '.' + k] = row[k]; });
+    return out;
+  }
+
+  global.MiniSQL = { run, parse, SqlError };
+})(typeof window !== 'undefined' ? window : globalThis);
+
+/* ===================== BA HUB — application script ===================== */
+
+/* ---------- constants ---------- */
+const PROJECT_STATUS = ['Planlama','Aktif','Beklemede','Tamamlandı'];
+const PRIORITY = ['Düşük','Orta','Yüksek'];
+const METHODOLOGY = ['Agile','Waterfall','Hibrit'];
+const REQ_TYPE = ['İş (Business)','Fonksiyonel','Fonksiyonel Olmayan','Teknik'];
+const REQ_STATUS = ['Taslak','İncelemede','Onaylandı','Geliştiriliyor','Tamamlandı','Reddedildi'];
+const STORY_STATUS = ['Backlog','Hazır','Geliştiriliyor','Test','Tamamlandı'];
+const AC_STATUS = ['Bekliyor','Doğrulandı','Başarısız'];
+const CR_IMPACT = ['Düşük','Orta','Yüksek'];
+const CR_STATUS = ['Gönderildi','İncelemede','Onaylandı','Reddedildi','Uygulandı'];
+const UAT_STATUS = ['Çalıştırılmadı','Başarılı','Başarısız','Bloke'];
+const FLOW_TYPES = [['start','Başlangıç'],['process','İşlem'],['decision','Karar'],['end','Bitiş']];
+const BRANCH_OPTS = [['','Yok'],['Evet','Evet'],['Hayır','Hayır']];
+const COLLECTIONS = ['projects','requirements','userStories','acceptanceCriteria','changeRequests','uatCases','processFlows'];
+
+const ICON_PLUS = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+const ICON_EDIT = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.3 2.3a1.5 1.5 0 0 1 2.1 2.1L5 12.8l-2.8.7.7-2.8 8.4-8.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+const ICON_TRASH = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11M6 4.5V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M6.5 7.5v4M9.5 7.5v4M3.5 4.5l.7 8.2a1 1 0 0 0 1 .9h5.6a1 1 0 0 0 1-.9l.7-8.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_CLOSE = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const ICON_UP = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_DOWN = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_DOWNLOAD = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2v8m0 0 3-3M8 10 5 7M3 13h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+const NAV_ICONS = {
+  dashboard:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/></svg>',
+  projects:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4.5a1 1 0 0 1 1-1h3l1.2 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+  requirements:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10v10H3z" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 6.5h5M5.5 9.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  stories:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2.5h8v11l-4-2.2-4 2.2v-11Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>',
+  ac:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.7 8.2l1.6 1.6 3-3.3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  flow:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="1.8" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="12" r="1.8" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="8" r="1.8" stroke="currentColor" stroke-width="1.3"/><path d="M5.6 4.9 10.4 7.2M5.6 11.1 10.4 8.8" stroke="currentColor" stroke-width="1.3"/></svg>',
+  cr:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 4.5a5 5 0 1 0 1 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13 1.5v3.5H9.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  uat:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4.5 2.5h7a1 1 0 0 1 1 1V13a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.3"/><path d="M6 2h4v1.6H6z" stroke="currentColor" stroke-width="1.3"/><path d="M5.7 8.5l1.4 1.4 2.7-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  trace:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="3.5" cy="4" r="1.7" stroke="currentColor" stroke-width="1.3"/><circle cx="12.5" cy="4" r="1.7" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="12" r="1.7" stroke="currentColor" stroke-width="1.3"/><path d="M5 5l2.2 5.5M11 5l-2.2 5.5" stroke="currentColor" stroke-width="1.3"/></svg>',
+  sql:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="4" rx="5" ry="2" stroke="currentColor" stroke-width="1.3"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4" stroke="currentColor" stroke-width="1.3"/><path d="M3 8c0 1.1 2.2 2 5 2s5-.9 5-2" stroke="currentColor" stroke-width="1.3"/></svg>',
+  analytics:'<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 13.5V9M6.5 13.5V5.5M10.5 13.5V7.5M14.5 13.5V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+};
+
+const ROUTES = {
+  dashboard: {title:'Dashboard', group:null},
+  projects: {title:'Projeler', group:null},
+  'req-list': {title:'Gereksinimler', group:'req'},
+  'user-stories': {title:'Kullanıcı Hikayeleri', group:'req'},
+  'acceptance-criteria': {title:'Kabul Kriterleri', group:'req'},
+  'process-flow': {title:'Süreç Akışı', group:'req'},
+  'change-requests': {title:'Değişiklik Talepleri', group:'req'},
+  uat: {title:'UAT', group:'req'},
+  traceability: {title:'İzlenebilirlik Matrisi', group:'req'},
+  sql: {title:'SQL / Data', group:null},
+  analytics: {title:'Analitik', group:null},
+};
+
+const SQL_EXAMPLES = [
+  {label:'Açık Gereksinimler', sql:"SELECT reqCode, title, status, priority FROM requirements WHERE status != 'Tamamlandı' AND status != 'Reddedildi' ORDER BY priority DESC"},
+  {label:'Yüksek Öncelikli Hikayeler', sql:"SELECT storyCode, epic, points, status FROM userStories WHERE priority = 'Yüksek' ORDER BY points DESC"},
+  {label:'Bekleyen Değişiklik Talepleri', sql:"SELECT crCode, title, impact, status FROM changeRequests WHERE status = 'İncelemede' OR status = 'Gönderildi'"},
+  {label:'Başarısız UAT Senaryoları', sql:"SELECT tcCode, title, testedBy, testedDate FROM uatCases WHERE status = 'Başarısız'"},
+  {label:'Gereksinim ↔ Hikaye (JOIN)', sql:"SELECT r.reqCode, r.title, u.storyCode, u.points FROM requirements r JOIN userStories u ON r.id = u.requirementId ORDER BY r.reqCode"},
+  {label:'Onaylı İş Gereksinimleri', sql:"SELECT reqCode, title, owner FROM requirements WHERE type = 'İş (Business)' AND status = 'Onaylandı'"},
+];
+
+/* ---------- seed data ---------- */
+const SEED_DATA = {
+  projects: [
+    {id:'p1', code:'PRJ-001', name:'SAP S/4HANA Finans Dönüşümü', client:'Turanlar Group', sponsor:'CFO Ofisi – Mehmet Arslan', status:'Aktif', priority:'Yüksek', methodology:'Hibrit', phase:'Gerçekleştirme (Realization)', startDate:'2026-03-02', endDate:'2026-12-18', description:'Genel muhasebe, banka mutabakatı, tedarikçi fatura onay süreçleri ve çoklu şirket konsolidasyon raporlamasının SAP S/4HANA’ya taşınması.'},
+    {id:'p2', code:'PRJ-002', name:'E-Fatura & E-Arşiv Entegrasyonu', client:'Turanlar Group', sponsor:'Mali İşler Direktörlüğü', status:'Aktif', priority:'Yüksek', methodology:'Agile', phase:'Sprint 4/8', startDate:'2026-05-04', endDate:'2026-08-28', description:'GİB e-Fatura/e-Arşiv servislerinin ERP ile entegrasyonu ve fatura red/itiraz süreçlerinin otomasyonu.'},
+    {id:'p3', code:'PRJ-003', name:'Depo Yönetim Sistemi (WMS) İyileştirme', client:'Turanlar Group Lojistik', sponsor:'Operasyon Direktörlüğü', status:'Planlama', priority:'Orta', methodology:'Waterfall', phase:'Kapsam Analizi', startDate:'2026-09-01', endDate:'2027-02-28', description:'Depo giriş-çıkış, sayım ve sevkiyat süreçlerinin barkod/RF terminal entegrasyonu ile yeniden tasarlanması.'},
+  ],
+  requirements: [
+    {id:'r1', projectId:'p1', reqCode:'REQ-001', title:'Genel Muhasebe Hesap Planı Standardizasyonu', type:'İş (Business)', priority:'Yüksek', status:'Onaylandı', owner:'Özgen Fincan', createdDate:'2026-03-10', description:'Tüm grup şirketleri için ortak hesap planı yapısının tanımlanması ve eski sistemden aktarım kurallarının belirlenmesi.'},
+    {id:'r2', projectId:'p1', reqCode:'REQ-002', title:'Otomatik Banka Mutabakatı', type:'Fonksiyonel', priority:'Yüksek', status:'Geliştiriliyor', owner:'Özgen Fincan', createdDate:'2026-03-18', description:'Banka hesap hareketlerinin MT940/CAMT formatlarından otomatik alınıp muhasebe kayıtlarıyla eşleştirilmesi.'},
+    {id:'r3', projectId:'p1', reqCode:'REQ-003', title:'Çoklu Şirket Konsolidasyon Raporlaması', type:'Fonksiyonel', priority:'Orta', status:'Taslak', owner:'Elif Karahan', createdDate:'2026-04-02', description:'Grup şirketleri arası eliminasyon işlemleri dahil konsolide bilanço ve gelir tablosu raporlaması.'},
+    {id:'r4', projectId:'p1', reqCode:'REQ-004', title:'Kullanıcı Rol ve Yetki Matrisi', type:'Fonksiyonel Olmayan', priority:'Yüksek', status:'İncelemede', owner:'Özgen Fincan', createdDate:'2026-04-08', description:'Görevler ayrılığı (SoD) ilkesine uygun rol tanımları ve onay hiyerarşisinin kurgulanması.'},
+    {id:'r5', projectId:'p1', reqCode:'REQ-005', title:'Tedarikçi Fatura Onay Akışı (AP Workflow)', type:'İş (Business)', priority:'Yüksek', status:'Onaylandı', owner:'Özgen Fincan', createdDate:'2026-03-25', description:'Gelen tedarikçi faturalarının tutara göre kademeli onay akışına yönlendirilmesi.'},
+    {id:'r6', projectId:'p2', reqCode:'REQ-006', title:'E-Fatura GİB Entegrasyonu', type:'Teknik', priority:'Yüksek', status:'Geliştiriliyor', owner:'Burak Yıldız', createdDate:'2026-05-10', description:'Kesilen faturaların GİB e-Fatura servisine gerçek zamanlı iletilmesi ve durum takibi.'},
+    {id:'r7', projectId:'p2', reqCode:'REQ-007', title:'Fatura Red/İtiraz Süreci', type:'Fonksiyonel', priority:'Orta', status:'Taslak', owner:'Elif Karahan', createdDate:'2026-05-22', description:'Reddedilen faturalar için otomatik bildirim ve itiraz takip sürecinin tanımlanması.'},
+    {id:'r8', projectId:'p3', reqCode:'REQ-008', title:'Barkod ile Depo Giriş-Çıkış', type:'Fonksiyonel', priority:'Orta', status:'Taslak', owner:'Cem Aydın', createdDate:'2026-09-05', description:'RF terminaller üzerinden barkod okutarak mal kabul ve sevkiyat işlemlerinin gerçekleştirilmesi.'},
+  ],
+  userStories: [
+    {id:'u1', requirementId:'r2', projectId:'p1', storyCode:'US-001', epic:'Banka Entegrasyonu', asA:'Finans Uzmanı', iWant:'banka hesap hareketlerinin otomatik olarak sisteme aktarılmasını', soThat:'manuel mutabakat süresini azaltabileyim', priority:'Yüksek', points:8, status:'Geliştiriliyor'},
+    {id:'u2', requirementId:'r2', projectId:'p1', storyCode:'US-002', epic:'Banka Entegrasyonu', asA:'Finans Müdürü', iWant:'eşleşmeyen kalemlerin otomatik olarak işaretlenmesini', soThat:'istisnaları hızlıca inceleyebileyim', priority:'Orta', points:5, status:'Hazır'},
+    {id:'u3', requirementId:'r5', projectId:'p1', storyCode:'US-003', epic:'Fatura Onay Akışı', asA:'Satın Alma Uzmanı', iWant:'gelen tedarikçi faturalarının tutarına göre otomatik onay adımına yönlendirilmesini', soThat:'onay süreci hızlansın', priority:'Yüksek', points:13, status:'Tamamlandı'},
+    {id:'u4', requirementId:'r5', projectId:'p1', storyCode:'US-004', epic:'Fatura Onay Akışı', asA:'Finans Direktörü', iWant:'50.000 TL üzeri faturalarda ikinci bir onay adımı görmek', soThat:'büyük ödemelerde ek kontrol sağlansın', priority:'Yüksek', points:5, status:'Test'},
+    {id:'u5', requirementId:'r6', projectId:'p2', storyCode:'US-005', epic:'E-Fatura Entegrasyonu', asA:'Muhasebe Uzmanı', iWant:'kesilen faturaların otomatik olarak GİB’e iletilmesini', soThat:'yasal süre içinde uyum sağlanabilsin', priority:'Yüksek', points:8, status:'Geliştiriliyor'},
+    {id:'u6', requirementId:'r1', projectId:'p1', storyCode:'US-006', epic:'Hesap Planı', asA:'Muhasebe Müdürü', iWant:'grup şirketleri için ortak hesap planı şablonunu kullanmayı', soThat:'raporlama tutarlılığı sağlanabilsin', priority:'Orta', points:3, status:'Tamamlandı'},
+  ],
+  acceptanceCriteria: [
+    {id:'ac1', userStoryId:'u1', projectId:'p1', acCode:'AC-001', given:'Banka hesap hareketi bankadan alındığında', when:'günlük otomatik senkronizasyon çalıştığında', then:'hareket ERP sistemine 24 saat içinde yansır', status:'Doğrulandı'},
+    {id:'ac2', userStoryId:'u1', projectId:'p1', acCode:'AC-002', given:'Aynı işlem numarasına sahip bir hareket zaten sistemde varsa', when:'senkronizasyon tekrar çalıştığında', then:'mükerrer kayıt oluşturulmaz', status:'Bekliyor'},
+    {id:'ac3', userStoryId:'u3', projectId:'p1', acCode:'AC-003', given:'Fatura tutarı 10.000 TL altındaysa', when:'fatura sisteme girildiğinde', then:'otomatik olarak departman yöneticisine onaya düşer', status:'Doğrulandı'},
+    {id:'ac4', userStoryId:'u3', projectId:'p1', acCode:'AC-004', given:'Fatura tutarı 10.000 TL ve üzerindeyse', when:'fatura sisteme girildiğinde', then:'önce departman yöneticisi sonra finans direktörü onayına düşer', status:'Doğrulandı'},
+    {id:'ac5', userStoryId:'u4', projectId:'p1', acCode:'AC-005', given:'Fatura tutarı 50.000 TL üzerindeyse', when:'ikinci onay adımına ulaştığında', then:'Finans Direktörü onayı olmadan ödeme emri oluşturulamaz', status:'Bekliyor'},
+    {id:'ac6', userStoryId:'u5', projectId:'p2', acCode:'AC-006', given:'Fatura ERP’de onaylandığında', when:'GİB servisine gönderildiğinde', then:'sistem 5 dakika içinde GİB durum kodunu geri alır', status:'Bekliyor'},
+    {id:'ac7', userStoryId:'u6', projectId:'p1', acCode:'AC-007', given:'Yeni bir grup şirketi ERP’ye tanımlandığında', when:'hesap planı şablonu uygulandığında', then:'şirket standart hesap planını otomatik devralır', status:'Doğrulandı'},
+  ],
+  changeRequests: [
+    {id:'cr1', projectId:'p1', crCode:'CR-001', title:'Onay Limitlerinin Güncellenmesi', description:'50.000 TL onay eşiğinin 75.000 TL’ye çıkarılması talebi.', requestedBy:'Finans Direktörü', impact:'Yüksek', status:'İncelemede', relatedRequirementIds:['r5'], dateSubmitted:'2026-08-05'},
+    {id:'cr2', projectId:'p1', crCode:'CR-002', title:'Banka Mutabakatına Döviz Hesapları Eklenmesi', description:'USD ve EUR banka hesaplarının da otomatik mutabakat kapsamına alınması.', requestedBy:'Hazine Uzmanı', impact:'Orta', status:'Onaylandı', relatedRequirementIds:['r2'], dateSubmitted:'2026-07-12'},
+    {id:'cr3', projectId:'p2', crCode:'CR-003', title:'E-Fatura Red Bildirimlerinin Otomatikleştirilmesi', description:'GİB tarafından reddedilen faturalar için sorumlu kullanıcıya otomatik e-posta gönderilmesi.', requestedBy:'Muhasebe Müdürü', impact:'Düşük', status:'Gönderildi', relatedRequirementIds:['r7'], dateSubmitted:'2026-08-20'},
+    {id:'cr4', projectId:'p1', crCode:'CR-004', title:'Konsolidasyon Raporuna Nakit Akış Tablosu Eklenmesi', description:'Aylık konsolide raporlara nakit akış tablosunun da dahil edilmesi talebi.', requestedBy:'CFO Ofisi', impact:'Orta', status:'Reddedildi', relatedRequirementIds:['r3'], dateSubmitted:'2026-06-30'},
+  ],
+  uatCases: [
+    {id:'uat1', userStoryId:'u3', projectId:'p1', tcCode:'UAT-001', title:'10.000 TL altı fatura tek onay akışı', steps:'1) 8.000 TL tutarında fatura girilir. 2) Sistem departman yöneticisine yönlendirir.', expectedResult:'Fatura tek onay adımından sonra ödemeye hazır hale gelir.', status:'Başarılı', testedBy:'Özgen Fincan', testedDate:'2026-08-11', notes:''},
+    {id:'uat2', userStoryId:'u3', projectId:'p1', tcCode:'UAT-002', title:'10.000 TL üzeri fatura çift onay akışı', steps:'1) 25.000 TL tutarında fatura girilir. 2) Departman yöneticisi onaylar. 3) Finans direktörüne yönlendirilir.', expectedResult:'Fatura iki onay adımından geçtikten sonra ödemeye hazır hale gelir.', status:'Başarılı', testedBy:'Özgen Fincan', testedDate:'2026-08-11', notes:''},
+    {id:'uat3', userStoryId:'u4', projectId:'p1', tcCode:'UAT-003', title:'50.000 TL üzeri ikinci onay kontrolü', steps:'1) 60.000 TL tutarında fatura girilir. 2) Departman yöneticisi onaylar.', expectedResult:'Finans Direktörü onayı olmadan ödeme emri oluşturulamamalı.', status:'Başarısız', testedBy:'Özgen Fincan', testedDate:'2026-08-14', notes:'Finans Direktörü onayı atlanabiliyor; hata kaydı DEF-112 açıldı.'},
+    {id:'uat4', userStoryId:'u1', projectId:'p1', tcCode:'UAT-004', title:'Banka hareketi otomatik aktarım', steps:'1) Test hesabına örnek hareket düşürülür. 2) Gece senkronizasyonu beklenir.', expectedResult:'Hareket 24 saat içinde ERP’ye yansımalı.', status:'Çalıştırılmadı', testedBy:'', testedDate:'', notes:''},
+    {id:'uat5', userStoryId:'u5', projectId:'p2', tcCode:'UAT-005', title:'GİB durum kodu geri alma', steps:'1) Test faturası GİB’e gönderilir. 2) 5 dakika beklenir.', expectedResult:'GİB durum kodu ekrana yansımalı.', status:'Bloke', testedBy:'Burak Yıldız', testedDate:'2026-08-16', notes:'GİB test ortamı erişim sorunu nedeniyle bekletiliyor.'},
+    {id:'uat6', userStoryId:'u6', projectId:'p1', tcCode:'UAT-006', title:'Yeni şirkete standart hesap planı ataması', steps:'1) Sistemde yeni bir şirket kodu açılır. 2) Hesap planı şablonu uygulanır.', expectedResult:'Şirket, grup standart hesap planını hatasız olarak devralmalı.', status:'Başarılı', testedBy:'Özgen Fincan', testedDate:'2026-08-05', notes:''},
+  ],
+  processFlows: [
+    {id:'pf1', projectId:'p1', name:'Tedarikçi Fatura Onay Süreci', description:'AP Workflow — REQ-005 kapsamında tanımlanan onay akışı.', steps:[
+      {id:'s1', type:'start', label:'Fatura ERP’ye girildi', branch:''},
+      {id:'s2', type:'process', label:'Sistem fatura tutarını kontrol eder', branch:''},
+      {id:'s3', type:'decision', label:'Tutar ≥ 50.000 TL mi?', branch:''},
+      {id:'s4', type:'process', label:'Departman Yöneticisi Onayı', branch:'Hayır'},
+      {id:'s5', type:'process', label:'Departman Yöneticisi Onayı', branch:'Evet'},
+      {id:'s6', type:'process', label:'Finans Direktörü Onayı', branch:'Evet'},
+      {id:'s7', type:'process', label:'Ödeme emri oluşturulur', branch:''},
+      {id:'s8', type:'end', label:'Süreç tamamlandı', branch:''},
+    ]},
+    {id:'pf2', projectId:'p2', name:'E-Fatura Red/İtiraz Süreci', description:'REQ-007 kapsamında tanımlanan itiraz akışı.', steps:[
+      {id:'s1', type:'start', label:'Fatura GİB’e iletildi', branch:''},
+      {id:'s2', type:'decision', label:'GİB onayladı mı?', branch:''},
+      {id:'s3', type:'process', label:'Fatura arşivlenir', branch:'Evet'},
+      {id:'s4', type:'process', label:'Sorumlu kullanıcıya bildirim gönderilir', branch:'Hayır'},
+      {id:'s5', type:'process', label:'Fatura düzeltilip yeniden gönderilir', branch:'Hayır'},
+      {id:'s6', type:'end', label:'Süreç tamamlandı', branch:''},
+    ]},
+  ],
+};
+
+/* ---------- state ---------- */
+const state = {
+  route: 'dashboard',
+  projectFilter: 'all',
+  reqNavOpen: true,
+  dbReady: false,
+  hasDownloads: false,
+  sqlQuery: SQL_EXAMPLES[0].sql,
+  sqlResult: null,
+  sqlError: null,
+  sqlElapsed: null,
+  flowEditing: null,
+  flowStepsDraft: null,
+  projects: [], requirements: [], userStories: [], acceptanceCriteria: [], changeRequests: [], uatCases: [], processFlows: [],
+};
+
+/* ---------- utils ---------- */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(prefix){ return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function fmtDate(iso){
+  if(!iso) return '—';
+  const parts = String(iso).split('-');
+  if(parts.length!==3) return iso;
+  return `${parts[2]}.${parts[1]}.${parts[0]}`;
+}
+function todayIso(){ return new Date().toISOString().slice(0,10); }
+function nextCode(list, field, prefix){
+  let max = 0;
+  list.forEach(it=>{
+    const m = String(it[field]||'').match(new RegExp('^'+prefix+'-(\\d+)$'));
+    if(m) max = Math.max(max, parseInt(m[1],10));
+  });
+  return prefix + '-' + String(max+1).padStart(3,'0');
+}
+function byId(list,id){ return list.find(x=>x.id===id); }
+function projectLabel(p){ return p ? `${p.code} — ${p.name}` : '—'; }
+
+/* status -> visual mapping */
+function reqStatusCls(s){ return {'Taslak':'badge-neutral','İncelemede':'badge-warning','Onaylandı':'badge-good','Geliştiriliyor':'badge-accent','Tamamlandı':'badge-good','Reddedildi':'badge-critical'}[s]||'badge-neutral'; }
+function reqStatusColor(s){ return {'Taslak':'var(--muted)','İncelemede':'var(--warning)','Onaylandı':'var(--good)','Geliştiriliyor':'var(--accent)','Tamamlandı':'var(--series-3)','Reddedildi':'var(--critical)'}[s]||'var(--muted)'; }
+function storyStatusCls(s){ return {'Backlog':'badge-neutral','Hazır':'badge-accent','Geliştiriliyor':'badge-warning','Test':'badge-serious','Tamamlandı':'badge-good'}[s]||'badge-neutral'; }
+function storyStatusColor(s){ return {'Backlog':'var(--muted)','Hazır':'var(--accent)','Geliştiriliyor':'var(--warning)','Test':'var(--serious)','Tamamlandı':'var(--good)'}[s]||'var(--muted)'; }
+function acStatusCls(s){ return {'Bekliyor':'badge-warning','Doğrulandı':'badge-good','Başarısız':'badge-critical'}[s]||'badge-neutral'; }
+function crStatusCls(s){ return {'Gönderildi':'badge-neutral','İncelemede':'badge-warning','Onaylandı':'badge-good','Reddedildi':'badge-critical','Uygulandı':'badge-accent'}[s]||'badge-neutral'; }
+function crImpactCls(s){ return {'Düşük':'badge-neutral','Orta':'badge-warning','Yüksek':'badge-critical'}[s]||'badge-neutral'; }
+function uatStatusCls(s){ return {'Çalıştırılmadı':'badge-neutral','Başarılı':'badge-good','Başarısız':'badge-critical','Bloke':'badge-serious'}[s]||'badge-neutral'; }
+function uatStatusColor(s){ return {'Çalıştırılmadı':'var(--muted)','Başarılı':'var(--good)','Başarısız':'var(--critical)','Bloke':'var(--serious)'}[s]||'var(--muted)'; }
+function priorityCls(p){ return p==='Yüksek'?'badge-priority-high':p==='Orta'?'badge-priority-medium':'badge-priority-low'; }
+
+function badge(text, cls){ return `<span class="badge ${cls}"><span class="dot"></span>${esc(text)}</span>`; }
+
+/* ---------- toast ---------- */
+function toast(msg, isError){
+  const stack = document.getElementById('toastStack');
+  const el = document.createElement('div');
+  el.className = 'toast' + (isError?' error':'');
+  el.textContent = msg;
+  stack.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .25s'; el.style.opacity='0'; setTimeout(()=>el.remove(),250); }, 3200);
+}
+
+/* ---------- db layer ---------- */
+let dbCap = null;
+let downloadsCap = null;
+
+async function boot(){
+  try{
+    if(window.claude && typeof window.claude.use === 'function'){
+      dbCap = await window.claude.use('db');
+      downloadsCap = await window.claude.use('downloads');
+    }
+  }catch(e){ /* no-op, degrade below */ }
+
+  state.hasDownloads = !!downloadsCap;
+
+  if(dbCap){
+    state.dbReady = true;
+    try{
+      const snap = await dbCap.collection('projects').limit(1).get();
+      if(snap.empty){ await seedDatabase(); }
+    }catch(e){ console.warn('BA HUB: tohum verisi kontrolü başarısız', e); }
+    subscribeAll();
+  } else {
+    state.dbReady = false;
+    loadLocalSeed();
+  }
+  wireGlobalUi();
+  renderAll();
+}
+
+async function seedDatabase(){
+  for(const coll of COLLECTIONS){
+    const items = SEED_DATA[coll] || [];
+    for(const item of items){
+      const rest = Object.assign({}, item);
+      const id = rest.id; delete rest.id;
+      try{ await dbCap.collection(coll).doc(id).set(rest); }
+      catch(e){ console.warn('BA HUB: tohum kaydı başarısız', coll, id, e); }
+    }
+  }
+}
+
+function loadLocalSeed(){
+  COLLECTIONS.forEach(coll=>{ state[coll] = (SEED_DATA[coll]||[]).map(x=>Object.assign({}, x)); });
+}
+
+function subscribeAll(){
+  COLLECTIONS.forEach(coll=>{
+    dbCap.collection(coll).onSnapshot(
+      snap=>{ state[coll] = snap.docs.map(d=>Object.assign({id:d.id}, d.data())); renderAll(); },
+      err=>{ console.warn('BA HUB: senkronizasyon hatası', coll, err); }
+    );
+  });
+}
+
+async function createDoc(coll, data){
+  if(dbCap){
+    try{ await dbCap.collection(coll).add(data); toast('Kaydedildi.'); }
+    catch(e){ toast('Kaydetme başarısız: ' + (e && e.message ? e.message : e), true); }
+  } else {
+    state[coll].push(Object.assign({id:uid(coll.slice(0,3))}, data));
+    toast('Kaydedildi (yerel oturum — kalıcı depolama bağlı değil).');
+    renderAll();
+  }
+}
+async function updateDoc(coll, id, data){
+  if(dbCap){
+    try{ await dbCap.collection(coll).doc(id).update(data); toast('Güncellendi.'); }
+    catch(e){ toast('Güncelleme başarısız: ' + (e && e.message ? e.message : e), true); }
+  } else {
+    const idx = state[coll].findIndex(x=>x.id===id);
+    if(idx>=0) state[coll][idx] = Object.assign({}, state[coll][idx], data);
+    toast('Güncellendi (yerel oturum).');
+    renderAll();
+  }
+}
+async function deleteDocById(coll, id){
+  if(dbCap){
+    try{ await dbCap.collection(coll).doc(id).delete(); toast('Silindi.'); }
+    catch(e){ toast('Silme başarısız: ' + (e && e.message ? e.message : e), true); }
+  } else {
+    state[coll] = state[coll].filter(x=>x.id!==id);
+    toast('Silindi (yerel oturum).');
+    renderAll();
+  }
+}
+function confirmAndDelete(coll, id, label){
+  if(confirm(`${label} silinsin mi? Bu işlem geri alınamaz.`)) deleteDocById(coll, id);
+}
+
+/* ---------- derived data / traceability ---------- */
+function computeTraceability(){
+  const rows = state.requirements.map(r=>{
+    const stories = state.userStories.filter(u=>u.requirementId===r.id);
+    const storyIds = stories.map(s=>s.id);
+    const acList = state.acceptanceCriteria.filter(ac=>storyIds.includes(ac.userStoryId));
+    const uatList = state.uatCases.filter(u=>storyIds.includes(u.userStoryId));
+    const crList = state.changeRequests.filter(c=>(c.relatedRequirementIds||[]).includes(r.id));
+    const hasStory = stories.length>0;
+    const hasAC = acList.length>0;
+    const hasUAT = uatList.length>0;
+    const acVerifiedAll = hasAC && acList.every(a=>a.status==='Doğrulandı');
+    const uatPassAll = hasUAT && uatList.every(u=>u.status==='Başarılı');
+    let traceStatus = 'Yok';
+    if(hasStory && hasAC && hasUAT && uatPassAll) traceStatus = 'Tam';
+    else if(hasStory || hasAC || hasUAT) traceStatus = 'Kısmi';
+    return {requirement:r, stories, acList, uatList, crList, hasStory, hasAC, hasUAT, acVerifiedAll, uatPassAll, traceStatus};
+  });
+  const total = rows.length || 1;
+  const fullCount = rows.filter(r=>r.traceStatus==='Tam').length;
+  const partialCount = rows.filter(r=>r.traceStatus==='Kısmi').length;
+  const noneCount = rows.filter(r=>r.traceStatus==='Yok').length;
+  return {rows, coveragePct: Math.round(fullCount/total*100), fullCount, partialCount, noneCount};
+}
+
+/* ---------- small chart components ---------- */
+function barChart(items, opts){
+  opts = opts || {};
+  const max = opts.max || Math.max(1, ...items.map(i=>i.value));
+  const fmt = opts.formatValue || (v=>String(v));
+  if(!items.length) return '<div class="empty-state">Gösterilecek veri yok.</div>';
+  const rows = items.map(it=>{
+    const pct = max ? Math.max(it.value>0?2:0, Math.round((it.value/max)*100)) : 0;
+    return `<div class="row"><div class="lbl" title="${esc(it.label)}">${esc(it.label)}</div><div class="track"><div class="fill" style="width:${pct}%;background:${it.color||'var(--accent)'}"></div></div><div class="val tnum">${esc(fmt(it.value))}</div></div>`;
+  }).join('');
+  return `<div class="barchart">${rows}</div>`;
+}
+function ring(pct, color){
+  const p = Math.max(0, Math.min(100, pct));
+  const deg = Math.round(p*3.6);
+  return `<div class="ring" role="img" aria-label="Kapsam yüzde ${p}" style="background:conic-gradient(${color} ${deg}deg, var(--surface-2) 0)"><b class="tnum">%${p}</b></div>`;
+}
+
+/* ---------- generic UI components ---------- */
+function kpiTile(label, value, delta, deltaCls){
+  return `<div class="kpi"><div class="kpi-label">${esc(label)}</div><div class="kpi-value tnum">${esc(String(value))}</div><div class="kpi-delta ${deltaCls||''}">${esc(delta||'')}</div></div>`;
+}
+function setTopbar(title, sub, actionsHtml){
+  document.getElementById('topbarTitle').textContent = title;
+  document.getElementById('topbarSub').textContent = sub || '';
+  document.getElementById('topbarActions').innerHTML = actionsHtml || '';
+}
+function projectFilterSelect(){
+  const opts = state.projects.map(p=>`<option value="${p.id}" ${state.projectFilter===p.id?'selected':''}>${esc(p.code+' — '+p.name)}</option>`).join('');
+  return `<select class="select" onchange="setProjectFilter(this.value)"><option value="all" ${state.projectFilter==='all'?'selected':''}>Tüm Projeler</option>${opts}</select>`;
+}
+function setProjectFilter(v){ state.projectFilter = v; renderAll(); }
+function filteredByProject(list){
+  if(state.projectFilter==='all') return list;
+  return list.filter(x=>x.projectId===state.projectFilter);
+}
+function emptyState(msg){ return `<div class="empty-state">${esc(msg)}</div>`; }
+
+/* ---------- form field builders ---------- */
+function fText(name,label,value,opts){
+  opts = opts||{}; value = value==null?'':value;
+  return `<div class="field"><label class="field-label" for="f_${name}">${esc(label)}${opts.required?' *':''}</label><input class="input" type="text" id="f_${name}" name="${name}" value="${esc(value)}" ${opts.required?'required':''} placeholder="${esc(opts.placeholder||'')}"></div>`;
+}
+function fTextarea(name,label,value,opts){
+  opts = opts||{}; value = value==null?'':value;
+  return `<div class="field"><label class="field-label" for="f_${name}">${esc(label)}${opts.required?' *':''}</label><textarea class="input" style="min-height:${opts.h||70}px" id="f_${name}" name="${name}" ${opts.required?'required':''} placeholder="${esc(opts.placeholder||'')}">${esc(value)}</textarea></div>`;
+}
+function fSelect(name,label,options,value,opts){
+  opts = opts||{};
+  const optsHtml = options.map(o=>{
+    const val = Array.isArray(o)?o[0]:o, lab = Array.isArray(o)?o[1]:o;
+    return `<option value="${esc(val)}" ${String(val)===String(value)?'selected':''}>${esc(lab)}</option>`;
+  }).join('');
+  return `<div class="field"><label class="field-label" for="f_${name}">${esc(label)}</label><select class="select w-full" id="f_${name}" name="${name}" ${opts.onchange?`onchange="${opts.onchange}"`:''}>${opts.emptyLabel?`<option value="">${esc(opts.emptyLabel)}</option>`:''}${optsHtml}</select></div>`;
+}
+function fDate(name,label,value){
+  return `<div class="field"><label class="field-label" for="f_${name}">${esc(label)}</label><input class="input" type="date" id="f_${name}" name="${name}" value="${esc(value||'')}"></div>`;
+}
+function fNumber(name,label,value,opts){
+  opts = opts||{};
+  return `<div class="field"><label class="field-label" for="f_${name}">${esc(label)}</label><input class="input" type="number" id="f_${name}" name="${name}" value="${esc(value==null?0:value)}" min="${opts.min==null?0:opts.min}" ${opts.step?`step="${opts.step}"`:''}></div>`;
+}
+
+/* ---------- modal ---------- */
+function closeModal(){ document.getElementById('modalRoot').innerHTML=''; }
+function openModal(cfg){
+  const root = document.getElementById('modalRoot');
+  root.innerHTML = `
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal" style="${cfg.wide?'max-width:720px':''}">
+        <div class="modal-head"><div class="modal-title">${esc(cfg.title)}</div><button type="button" class="icon-btn" onclick="closeModal()" aria-label="Kapat">${ICON_CLOSE}</button></div>
+        <form id="modalForm" novalidate>
+          <div class="modal-body">${cfg.bodyHtml}</div>
+          <div class="modal-foot">
+            <button type="button" class="btn btn-ghost" onclick="closeModal()">Vazgeç</button>
+            <button type="submit" class="btn btn-primary">${esc(cfg.submitLabel||'Kaydet')}</button>
+          </div>
+        </form>
+      </div>
+    </div>`;
+  document.getElementById('modalBackdrop').addEventListener('click', (e)=>{ if(e.target.id==='modalBackdrop') closeModal(); });
+  document.getElementById('modalForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!e.target.reportValidity()) return;
+    const fd = new FormData(e.target);
+    await cfg.onSubmit(fd);
+  });
+  const firstInput = root.querySelector('input,select,textarea');
+  if(firstInput) firstInput.focus();
+}
+
+/* ---------- entity modals ---------- */
+function openProjectModal(id){
+  const ex = id ? byId(state.projects, id) : null;
+  const body = `
+    ${fText('name','Proje Adı', ex&&ex.name, {required:true})}
+    <div class="field-row">${fText('client','Müşteri / Birim', ex&&ex.client)}${fText('sponsor','Sponsor', ex&&ex.sponsor)}</div>
+    <div class="field-row">${fSelect('status','Durum', PROJECT_STATUS, (ex&&ex.status)||'Planlama')}${fSelect('priority','Öncelik', PRIORITY, (ex&&ex.priority)||'Orta')}</div>
+    <div class="field-row">${fSelect('methodology','Metodoloji', METHODOLOGY, (ex&&ex.methodology)||'Agile')}${fText('phase','Faz', ex&&ex.phase)}</div>
+    <div class="field-row">${fDate('startDate','Başlangıç Tarihi', ex&&ex.startDate)}${fDate('endDate','Bitiş Tarihi', ex&&ex.endDate)}</div>
+    ${fTextarea('description','Açıklama', ex&&ex.description, {h:80})}
+  `;
+  openModal({
+    title: ex ? 'Projeyi Düzenle' : 'Yeni Proje',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      if(ex){ await updateDoc('projects', ex.id, data); }
+      else { data.code = nextCode(state.projects,'code','PRJ'); await createDoc('projects', data); }
+      closeModal();
+    }
+  });
+}
+
+function openRequirementModal(id){
+  const ex = id ? byId(state.requirements, id) : null;
+  const projOpts = state.projects.map(p=>[p.id, projectLabel(p)]);
+  const defProj = (ex&&ex.projectId) || state.projectFilter!=='all' && state.projectFilter || (state.projects[0]&&state.projects[0].id);
+  const body = `
+    ${fSelect('projectId','Proje', projOpts, defProj)}
+    ${fText('title','Gereksinim Başlığı', ex&&ex.title, {required:true})}
+    <div class="field-row">${fSelect('type','Tip', REQ_TYPE, (ex&&ex.type)||'Fonksiyonel')}${fSelect('priority','Öncelik', PRIORITY, (ex&&ex.priority)||'Orta')}</div>
+    <div class="field-row">${fSelect('status','Durum', REQ_STATUS, (ex&&ex.status)||'Taslak')}${fText('owner','Sahip', (ex&&ex.owner)||'')}</div>
+    ${fDate('createdDate','Oluşturma Tarihi', (ex&&ex.createdDate)||todayIso())}
+    ${fTextarea('description','Açıklama', ex&&ex.description, {h:80})}
+  `;
+  openModal({
+    title: ex ? 'Gereksinimi Düzenle' : 'Yeni Gereksinim',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      if(ex){ await updateDoc('requirements', ex.id, data); }
+      else { data.reqCode = nextCode(state.requirements,'reqCode','REQ'); await createDoc('requirements', data); }
+      closeModal();
+    }
+  });
+}
+
+function openUserStoryModal(id){
+  const ex = id ? byId(state.userStories, id) : null;
+  const reqOpts = state.requirements.map(r=>[r.id, r.reqCode+' — '+r.title]);
+  const defReq = (ex&&ex.requirementId) || (state.requirements[0]&&state.requirements[0].id);
+  const body = `
+    ${fSelect('requirementId','Bağlı Gereksinim', reqOpts, defReq)}
+    ${fText('epic','Epic', ex&&ex.epic)}
+    ${fText('asA','Kullanıcı Rolü (As a...)', ex&&ex.asA, {required:true, placeholder:'Finans Uzmanı'})}
+    ${fTextarea('iWant','İhtiyaç (I want...)', ex&&ex.iWant, {h:56, placeholder:'...istiyorum'})}
+    ${fTextarea('soThat','Amaç (So that...)', ex&&ex.soThat, {h:56, placeholder:'...böylece'})}
+    <div class="field-row">${fSelect('priority','Öncelik', PRIORITY, (ex&&ex.priority)||'Orta')}${fNumber('points','Story Point', (ex&&ex.points)||3, {min:0})}</div>
+    ${fSelect('status','Durum', STORY_STATUS, (ex&&ex.status)||'Backlog')}
+  `;
+  openModal({
+    title: ex ? 'Kullanıcı Hikayesini Düzenle' : 'Yeni Kullanıcı Hikayesi',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      data.points = Number(data.points)||0;
+      const req = byId(state.requirements, data.requirementId);
+      data.projectId = req ? req.projectId : null;
+      if(ex){ await updateDoc('userStories', ex.id, data); }
+      else { data.storyCode = nextCode(state.userStories,'storyCode','US'); await createDoc('userStories', data); }
+      closeModal();
+    }
+  });
+}
+
+function openAcModal(id){
+  const ex = id ? byId(state.acceptanceCriteria, id) : null;
+  const storyOpts = state.userStories.map(s=>[s.id, s.storyCode+' — '+s.epic]);
+  const defStory = (ex&&ex.userStoryId) || (state.userStories[0]&&state.userStories[0].id);
+  const body = `
+    ${fSelect('userStoryId','Bağlı Kullanıcı Hikayesi', storyOpts, defStory)}
+    ${fTextarea('given','Given (Verildiğinde)', ex&&ex.given, {h:56, required:true})}
+    ${fTextarea('when','When (Gerçekleştiğinde)', ex&&ex.when, {h:56, required:true})}
+    ${fTextarea('then','Then (Sonuç)', ex&&ex.then, {h:56, required:true})}
+    ${fSelect('status','Durum', AC_STATUS, (ex&&ex.status)||'Bekliyor')}
+  `;
+  openModal({
+    title: ex ? 'Kabul Kriterini Düzenle' : 'Yeni Kabul Kriteri',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      const story = byId(state.userStories, data.userStoryId);
+      data.projectId = story ? story.projectId : null;
+      if(ex){ await updateDoc('acceptanceCriteria', ex.id, data); }
+      else { data.acCode = nextCode(state.acceptanceCriteria,'acCode','AC'); await createDoc('acceptanceCriteria', data); }
+      closeModal();
+    }
+  });
+}
+
+function crReqChecklistHtml(projectId, selectedIds){
+  selectedIds = selectedIds || [];
+  const reqs = state.requirements.filter(r=>r.projectId===projectId);
+  if(!reqs.length) return '<div class="hint">Bu projede gereksinim bulunmuyor.</div>';
+  return reqs.map(r=>`<label style="display:flex;gap:8px;align-items:center;font-size:12.5px;padding:4px 0;cursor:pointer"><input type="checkbox" name="relatedReq" value="${r.id}" ${selectedIds.includes(r.id)?'checked':''}> ${esc(r.reqCode)} — ${esc(r.title)}</label>`).join('');
+}
+function refreshCRRequirementChecklist(projectId){
+  document.getElementById('crReqChecklist').innerHTML = crReqChecklistHtml(projectId, []);
+}
+function openChangeRequestModal(id){
+  const ex = id ? byId(state.changeRequests, id) : null;
+  const projOpts = state.projects.map(p=>[p.id, projectLabel(p)]);
+  const defProj = (ex&&ex.projectId) || (state.projects[0]&&state.projects[0].id);
+  const body = `
+    ${fSelect('projectId','Proje', projOpts, defProj, {onchange:'refreshCRRequirementChecklist(this.value)'})}
+    ${fText('title','Başlık', ex&&ex.title, {required:true})}
+    ${fTextarea('description','Açıklama', ex&&ex.description, {h:70})}
+    <div class="field-row">${fText('requestedBy','Talep Eden', ex&&ex.requestedBy)}${fDate('dateSubmitted','Talep Tarihi', (ex&&ex.dateSubmitted)||todayIso())}</div>
+    <div class="field-row">${fSelect('impact','Etki', CR_IMPACT, (ex&&ex.impact)||'Orta')}${fSelect('status','Durum', CR_STATUS, (ex&&ex.status)||'Gönderildi')}</div>
+    <div class="field"><label class="field-label">İlgili Gereksinim(ler)</label>
+      <div id="crReqChecklist" style="max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px 10px">${crReqChecklistHtml(defProj, ex&&ex.relatedRequirementIds)}</div>
+    </div>
+  `;
+  openModal({
+    title: ex ? 'Değişiklik Talebini Düzenle' : 'Yeni Değişiklik Talebi',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      data.relatedRequirementIds = fd.getAll('relatedReq');
+      delete data.relatedReq;
+      if(ex){ await updateDoc('changeRequests', ex.id, data); }
+      else { data.crCode = nextCode(state.changeRequests,'crCode','CR'); await createDoc('changeRequests', data); }
+      closeModal();
+    }
+  });
+}
+
+function openUatModal(id){
+  const ex = id ? byId(state.uatCases, id) : null;
+  const storyOpts = state.userStories.map(s=>[s.id, s.storyCode+' — '+s.epic]);
+  const defStory = (ex&&ex.userStoryId) || (state.userStories[0]&&state.userStories[0].id);
+  const body = `
+    ${fSelect('userStoryId','Bağlı Kullanıcı Hikayesi', storyOpts, defStory)}
+    ${fText('title','Senaryo Başlığı', ex&&ex.title, {required:true})}
+    ${fTextarea('steps','Test Adımları', ex&&ex.steps, {h:70})}
+    ${fTextarea('expectedResult','Beklenen Sonuç', ex&&ex.expectedResult, {h:56})}
+    <div class="field-row">${fSelect('status','Durum', UAT_STATUS, (ex&&ex.status)||'Çalıştırılmadı')}${fText('testedBy','Test Eden', ex&&ex.testedBy)}</div>
+    ${fDate('testedDate','Test Tarihi', ex&&ex.testedDate)}
+    ${fTextarea('notes','Not', ex&&ex.notes, {h:50})}
+  `;
+  openModal({
+    title: ex ? 'UAT Senaryosunu Düzenle' : 'Yeni UAT Senaryosu',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      const story = byId(state.userStories, data.userStoryId);
+      data.projectId = story ? story.projectId : null;
+      if(ex){ await updateDoc('uatCases', ex.id, data); }
+      else { data.tcCode = nextCode(state.uatCases,'tcCode','UAT'); await createDoc('uatCases', data); }
+      closeModal();
+    }
+  });
+}
+
+function openFlowModal(id){
+  const ex = id ? byId(state.processFlows, id) : null;
+  const projOpts = state.projects.map(p=>[p.id, projectLabel(p)]);
+  const defProj = (ex&&ex.projectId) || (state.projectFilter!=='all' && state.projectFilter) || (state.projects[0]&&state.projects[0].id);
+  const body = `
+    ${fSelect('projectId','Proje', projOpts, defProj)}
+    ${fText('name','Süreç Adı', ex&&ex.name, {required:true})}
+    ${fTextarea('description','Açıklama', ex&&ex.description, {h:60})}
+  `;
+  openModal({
+    title: ex ? 'Süreç Akışını Düzenle' : 'Yeni Süreç Akışı',
+    bodyHtml: body,
+    onSubmit: async (fd)=>{
+      const data = Object.fromEntries(fd.entries());
+      if(ex){ await updateDoc('processFlows', ex.id, data); }
+      else { data.steps = []; await createDoc('processFlows', data); }
+      closeModal();
+    }
+  });
+}
+
+function deleteFlow(id){ confirmAndDelete('processFlows', id, 'Süreç akışı'); }
+
+/* ---------- process flow step editor (inline) ---------- */
+function startFlowStepEdit(id){
+  const f = byId(state.processFlows, id);
+  state.flowEditing = id;
+  state.flowStepsDraft = JSON.parse(JSON.stringify(f.steps||[]));
+  renderAll();
+}
+function cancelFlowStepEdit(){ state.flowEditing = null; state.flowStepsDraft = null; renderAll(); }
+function addFlowStep(){ state.flowStepsDraft.push({id:uid('s'), type:'process', label:'', branch:''}); renderAll(); }
+function removeFlowStep(idx){ state.flowStepsDraft.splice(idx,1); renderAll(); }
+function moveFlowStep(idx,dir){
+  const j = idx+dir;
+  if(j<0||j>=state.flowStepsDraft.length) return;
+  const tmp = state.flowStepsDraft[idx];
+  state.flowStepsDraft[idx] = state.flowStepsDraft[j];
+  state.flowStepsDraft[j] = tmp;
+  renderAll();
+}
+function setFlowStepField(idx, field, value){
+  state.flowStepsDraft[idx][field] = value;
+  if(field !== 'label') renderAll();
+}
+async function saveFlowSteps(){
+  const id = state.flowEditing;
+  const steps = state.flowStepsDraft;
+  state.flowEditing = null; state.flowStepsDraft = null;
+  await updateDoc('processFlows', id, {steps});
+}
+function renderFlowStepEditor(){
+  const rows = state.flowStepsDraft.map((s,idx)=>`
+    <div class="field-row" style="align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:10px">
+      <div class="field" style="min-width:120px;flex:0 0 120px"><label class="field-label">Tip</label>
+        <select class="select w-full" onchange="setFlowStepField(${idx},'type',this.value)">
+          ${FLOW_TYPES.map(t=>`<option value="${t[0]}" ${s.type===t[0]?'selected':''}>${t[1]}</option>`).join('')}
+        </select></div>
+      <div class="field" style="min-width:96px;flex:0 0 96px"><label class="field-label">Dal</label>
+        <select class="select w-full" onchange="setFlowStepField(${idx},'branch',this.value)">
+          ${BRANCH_OPTS.map(t=>`<option value="${t[0]}" ${(s.branch||'')===t[0]?'selected':''}>${t[1]}</option>`).join('')}
+        </select></div>
+      <div class="field" style="flex:1;min-width:180px"><label class="field-label">Etiket</label>
+        <input class="input w-full" type="text" value="${esc(s.label)}" oninput="setFlowStepField(${idx},'label',this.value)"></div>
+      <div class="row-actions" style="padding-bottom:7px">
+        <button type="button" class="icon-btn" onclick="moveFlowStep(${idx},-1)" title="Yukarı taşı">${ICON_UP}</button>
+        <button type="button" class="icon-btn" onclick="moveFlowStep(${idx},1)" title="Aşağı taşı">${ICON_DOWN}</button>
+        <button type="button" class="icon-btn" onclick="removeFlowStep(${idx})" title="Adımı sil">${ICON_TRASH}</button>
+      </div>
+    </div>`).join('');
+  return `<div>
+    ${rows || emptyState('Henüz adım eklenmedi.')}
+    <div class="flex gap-8" style="margin-top:6px">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addFlowStep()">${ICON_PLUS} Adım Ekle</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="saveFlowSteps()">Adımları Kaydet</button>
+    </div>
+  </div>`;
+}
+
+/* renders an ordered step list as a vertical flow diagram, grouping
+   consecutive branch-tagged steps (branch:'Evet'/'Hayır') into side-by-side
+   columns that reconverge at the next non-branch step. */
+function renderFlowSteps(steps){
+  if(!steps || !steps.length) return emptyState('Bu süreç için henüz adım tanımlanmadı.');
+  const flowNode = (s)=>`<div class="flow-node ${s.type}">${esc(s.label||'(isimsiz adım)')}</div>`;
+  let html = '<div class="flow">';
+  let i = 0;
+  while(i < steps.length){
+    html += flowNode(steps[i]);
+    let j = i+1;
+    const branchSteps = [];
+    while(j < steps.length && steps[j].branch){ branchSteps.push(steps[j]); j++; }
+    if(branchSteps.length){
+      html += '<div class="flow-connector arrow"></div>';
+      const buckets = {}; const order = [];
+      branchSteps.forEach(s=>{ if(!buckets[s.branch]){buckets[s.branch]=[]; order.push(s.branch);} buckets[s.branch].push(s); });
+      order.sort((a,b)=> (a==='Evet'?0:a==='Hayır'?1:2) - (b==='Evet'?0:b==='Hayır'?1:2));
+      html += '<div class="flow-branch-wrap">';
+      order.forEach(label=>{
+        html += `<div class="flow-branch"><div class="flow-branch-label">${esc(label)}</div>`;
+        buckets[label].forEach((s,idx)=>{
+          html += flowNode(s);
+          if(idx < buckets[label].length-1) html += '<div class="flow-connector arrow"></div>';
+        });
+        html += '</div>';
+      });
+      html += '</div>';
+      i = j;
+      if(i < steps.length) html += '<div class="flow-connector arrow"></div>';
+      continue;
+    }
+    i++;
+    if(i < steps.length) html += '<div class="flow-connector arrow"></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ---------- shared table fragments ---------- */
+function crTableHtml(list, opts){
+  opts = opts || {};
+  const head = `<th>Kod</th><th>Başlık</th>${opts.showProject?'<th>Proje</th>':''}<th>Etki</th><th>Durum</th><th>Tarih</th>${opts.actions?'<th></th>':''}`;
+  const rows = list.map(c=>{
+    const proj = byId(state.projects, c.projectId);
+    return `<tr>
+      <td class="cell-strong tnum">${esc(c.crCode)}</td>
+      <td>${esc(c.title)}</td>
+      ${opts.showProject?`<td class="cell-muted">${proj?esc(proj.code):'—'}</td>`:''}
+      <td>${badge(c.impact, crImpactCls(c.impact))}</td>
+      <td>${badge(c.status, crStatusCls(c.status))}</td>
+      <td class="cell-muted tnum">${fmtDate(c.dateSubmitted)}</td>
+      ${opts.actions?`<td><div class="row-actions"><button class="icon-btn" onclick="openChangeRequestModal('${c.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('changeRequests','${c.id}','Değişiklik talebi')" title="Sil">${ICON_TRASH}</button></div></td>`:''}
+    </tr>`;
+  }).join('');
+  return `<div class="tbl-wrap"><table class="tbl"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function projectStatusBadgeCls(s){ return s==='Aktif'?'badge-accent':s==='Tamamlandı'?'badge-good':s==='Beklemede'?'badge-warning':'badge-neutral'; }
+function projectsSummaryHtml(){
+  const rows = state.projects.map(p=>{
+    const reqCount = state.requirements.filter(r=>r.projectId===p.id).length;
+    return `<tr>
+      <td class="cell-strong tnum">${esc(p.code)}</td>
+      <td>${esc(p.name)}</td>
+      <td>${badge(p.status, projectStatusBadgeCls(p.status))}</td>
+      <td class="cell-muted">${esc(p.phase||'—')}</td>
+      <td class="cell-muted tnum">${reqCount}</td>
+      <td class="cell-muted tnum">${fmtDate(p.endDate)}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Ad</th><th>Durum</th><th>Faz</th><th>Gereksinim</th><th>Bitiş</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- views ---------- */
+function viewDashboard(){
+  setTopbar('Dashboard', 'BA HUB genel görünüm', '');
+  const activeProjects = state.projects.filter(p=>p.status==='Aktif').length;
+  const openReq = state.requirements.filter(r=>!['Tamamlandı','Reddedildi'].includes(r.status)).length;
+  const pendingCR = state.changeRequests.filter(c=>['Gönderildi','İncelemede'].includes(c.status)).length;
+  const uatDone = state.uatCases.filter(u=>u.status==='Başarılı'||u.status==='Başarısız');
+  const uatPassRate = uatDone.length ? Math.round(state.uatCases.filter(u=>u.status==='Başarılı').length/uatDone.length*100) : 0;
+  const trace = computeTraceability();
+  const reqByStatus = REQ_STATUS.map(s=>({label:s, value: state.requirements.filter(r=>r.status===s).length, color: reqStatusColor(s)})).filter(x=>x.value>0);
+  const recentCRs = state.changeRequests.slice().sort((a,b)=> (b.dateSubmitted||'').localeCompare(a.dateSubmitted||'')).slice(0,5);
+
+  return `
+    <div class="grid-kpi">
+      ${kpiTile('Toplam Proje', state.projects.length, `${activeProjects} aktif`)}
+      ${kpiTile('Açık Gereksinim', openReq, `${state.requirements.length} toplam içinde`)}
+      ${kpiTile('Bekleyen Değişiklik Talebi', pendingCR, `${state.changeRequests.length} toplam içinde`)}
+      ${kpiTile('UAT Başarı Oranı', '%'+uatPassRate, `${uatDone.length} çalıştırılan senaryo`)}
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">Gereksinim Durumu Dağılımı</div><div class="card-sub">Tüm projeler</div>${barChart(reqByStatus)}</div>
+      <div class="card"><div class="card-title">İzlenebilirlik Kapsamı</div><div class="card-sub">Gereksinim → Hikaye → UAT</div>
+        <div class="ring-wrap">${ring(trace.coveragePct,'var(--good)')}
+          <div style="font-size:12.5px;color:var(--text-2);display:flex;flex-direction:column;gap:4px">
+            <div><b class="tnum" style="color:var(--good)">${trace.fullCount}</b> tam izlenebilir</div>
+            <div><b class="tnum">${trace.partialCount}</b> kısmi</div>
+            <div><b class="tnum" style="color:var(--critical)">${trace.noneCount}</b> izlenemiyor</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><div class="card-title">Son Değişiklik Talepleri</div><div class="card-sub mb-0">En güncel kayıtlar</div></div><button type="button" class="link-btn" onclick="navigate('change-requests')">Tümünü gör →</button></div>
+      ${recentCRs.length ? crTableHtml(recentCRs, {showProject:true, actions:false}) : emptyState('Henüz değişiklik talebi yok.')}
+    </div>
+    <div class="card">
+      <div class="card-title">Projeler</div><div class="card-sub">Durum ve kapsam özeti</div>
+      ${state.projects.length ? projectsSummaryHtml() : emptyState('Henüz proje yok.')}
+    </div>`;
+}
+
+function viewProjects(){
+  setTopbar('Projeler', `${state.projects.length} proje`, `<button type="button" class="btn btn-primary" onclick="openProjectModal()">${ICON_PLUS} Yeni Proje</button>`);
+  if(!state.projects.length) return `<div class="card">${emptyState('Henüz proje eklenmedi.')}</div>`;
+  const rows = state.projects.map(p=>{
+    const reqCount = state.requirements.filter(r=>r.projectId===p.id).length;
+    const crCount = state.changeRequests.filter(c=>c.projectId===p.id).length;
+    return `<tr>
+      <td class="cell-strong tnum">${esc(p.code)}</td>
+      <td><div style="font-weight:600">${esc(p.name)}</div><div class="cell-muted" style="font-size:11.5px">${esc(p.client||'')}</div></td>
+      <td>${badge(p.status, projectStatusBadgeCls(p.status))}</td>
+      <td>${badge(p.priority, priorityCls(p.priority))}</td>
+      <td class="cell-muted">${esc(p.methodology||'—')}</td>
+      <td class="cell-muted">${esc(p.phase||'—')}</td>
+      <td class="cell-muted tnum">${reqCount} gereksinim · ${crCount} CR</td>
+      <td class="cell-muted tnum">${fmtDate(p.endDate)}</td>
+      <td><div class="row-actions"><button class="icon-btn" onclick="openProjectModal('${p.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('projects','${p.id}','Proje')" title="Sil">${ICON_TRASH}</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Proje</th><th>Durum</th><th>Öncelik</th><th>Metodoloji</th><th>Faz</th><th>Kapsam</th><th>Bitiş</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function viewReqList(){
+  const list = filteredByProject(state.requirements);
+  setTopbar('Gereksinimler', `${list.length} kayıt`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openRequirementModal()">${ICON_PLUS} Yeni Gereksinim</button>`);
+  if(!list.length) return `<div class="card">${emptyState('Kayıt bulunamadı.')}</div>`;
+  const rows = list.map(r=>{
+    const proj = byId(state.projects, r.projectId);
+    return `<tr>
+      <td class="cell-strong tnum">${esc(r.reqCode)}</td>
+      <td style="max-width:280px">${esc(r.title)}</td>
+      <td class="cell-muted">${proj?esc(proj.code):'—'}</td>
+      <td class="cell-muted">${esc(r.type)}</td>
+      <td>${badge(r.priority, priorityCls(r.priority))}</td>
+      <td>${badge(r.status, reqStatusCls(r.status))}</td>
+      <td class="cell-muted">${esc(r.owner||'—')}</td>
+      <td class="cell-muted tnum">${fmtDate(r.createdDate)}</td>
+      <td><div class="row-actions"><button class="icon-btn" onclick="openRequirementModal('${r.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('requirements','${r.id}','Gereksinim')" title="Sil">${ICON_TRASH}</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Başlık</th><th>Proje</th><th>Tip</th><th>Öncelik</th><th>Durum</th><th>Sahip</th><th>Tarih</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function viewUserStories(){
+  const stories = filteredByProject(state.userStories);
+  setTopbar('Kullanıcı Hikayeleri', `${stories.length} hikaye · ${stories.reduce((s,x)=>s+(x.points||0),0)} puan`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openUserStoryModal()">${ICON_PLUS} Yeni Hikaye</button>`);
+  if(!stories.length) return `<div class="card">${emptyState('Kayıt bulunamadı.')}</div>`;
+  const rows = stories.map(s=>{
+    const req = byId(state.requirements, s.requirementId);
+    return `<tr>
+      <td class="cell-strong tnum">${esc(s.storyCode)}</td>
+      <td style="max-width:380px"><div style="font-weight:600">${esc(s.epic||'—')}</div><div class="cell-muted" style="font-size:12px">${esc(s.asA)} olarak ${esc(s.iWant)}, böylece ${esc(s.soThat)}.</div></td>
+      <td class="cell-muted">${req?esc(req.reqCode):'—'}</td>
+      <td>${badge(s.priority, priorityCls(s.priority))}</td>
+      <td class="cell-muted tnum">${s.points}</td>
+      <td>${badge(s.status, storyStatusCls(s.status))}</td>
+      <td><div class="row-actions"><button class="icon-btn" onclick="openUserStoryModal('${s.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('userStories','${s.id}','Kullanıcı hikayesi')" title="Sil">${ICON_TRASH}</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Hikaye</th><th>Gereksinim</th><th>Öncelik</th><th>Puan</th><th>Durum</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function viewAcceptanceCriteria(){
+  const list = filteredByProject(state.acceptanceCriteria);
+  setTopbar('Kabul Kriterleri', `${list.length} kriter`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openAcModal()">${ICON_PLUS} Yeni Kriter</button>`);
+  if(!list.length) return `<div class="card">${emptyState('Kayıt bulunamadı.')}</div>`;
+  const rows = list.map(a=>{
+    const story = byId(state.userStories, a.userStoryId);
+    return `<tr>
+      <td class="cell-strong tnum">${esc(a.acCode)}</td>
+      <td class="cell-muted">${story?esc(story.storyCode):'—'}</td>
+      <td style="max-width:420px"><b>Given</b> ${esc(a.given)}<br><b>When</b> ${esc(a.when)}<br><b>Then</b> ${esc(a.then)}</td>
+      <td>${badge(a.status, acStatusCls(a.status))}</td>
+      <td><div class="row-actions"><button class="icon-btn" onclick="openAcModal('${a.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('acceptanceCriteria','${a.id}','Kabul kriteri')" title="Sil">${ICON_TRASH}</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Hikaye</th><th>Given / When / Then</th><th>Durum</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function viewProcessFlow(){
+  const flows = filteredByProject(state.processFlows);
+  setTopbar('Süreç Akışı', `${flows.length} süreç akışı`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openFlowModal()">${ICON_PLUS} Yeni Süreç Akışı</button>`);
+  if(!flows.length) return `<div class="card">${emptyState('Bu kapsamda süreç akışı yok.')}</div>`;
+  return flows.map(f=>{
+    const proj = byId(state.projects, f.projectId);
+    const editing = state.flowEditing === f.id;
+    return `<div class="card">
+      <div class="card-head">
+        <div><div class="card-title">${esc(f.name)}</div><div class="card-sub mb-0">${proj?esc(proj.code+' · '+proj.name):''}${f.description?' — '+esc(f.description):''}</div></div>
+        <div class="row-actions">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="${editing?'cancelFlowStepEdit()':`startFlowStepEdit('${f.id}')`}">${editing?'Vazgeç':'Adımları Düzenle'}</button>
+          <button type="button" class="icon-btn" onclick="openFlowModal('${f.id}')" title="Düzenle">${ICON_EDIT}</button>
+          <button type="button" class="icon-btn" onclick="deleteFlow('${f.id}')" title="Sil">${ICON_TRASH}</button>
+        </div>
+      </div>
+      ${editing ? renderFlowStepEditor() : renderFlowSteps(f.steps||[])}
+    </div>`;
+  }).join('');
+}
+
+function viewChangeRequests(){
+  const list = filteredByProject(state.changeRequests);
+  setTopbar('Değişiklik Talepleri', `${list.length} talep`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openChangeRequestModal()">${ICON_PLUS} Yeni Talep</button>`);
+  if(!list.length) return `<div class="card">${emptyState('Kayıt bulunamadı.')}</div>`;
+  return `<div class="card">${crTableHtml(list, {showProject:true, actions:true})}</div>`;
+}
+
+function viewUat(){
+  const list = filteredByProject(state.uatCases);
+  const pass = list.filter(u=>u.status==='Başarılı').length;
+  const fail = list.filter(u=>u.status==='Başarısız').length;
+  setTopbar('UAT (Kullanıcı Kabul Testi)', `${list.length} senaryo · ${pass} başarılı · ${fail} başarısız`, `${projectFilterSelect()}<button type="button" class="btn btn-primary" onclick="openUatModal()">${ICON_PLUS} Yeni Senaryo</button>`);
+  if(!list.length) return `<div class="card">${emptyState('Kayıt bulunamadı.')}</div>`;
+  const rows = list.map(u=>{
+    const story = byId(state.userStories, u.userStoryId);
+    return `<tr>
+      <td class="cell-strong tnum">${esc(u.tcCode)}</td>
+      <td class="cell-muted">${story?esc(story.storyCode):'—'}</td>
+      <td style="max-width:280px">${esc(u.title)}</td>
+      <td>${badge(u.status, uatStatusCls(u.status))}</td>
+      <td class="cell-muted">${esc(u.testedBy||'—')}</td>
+      <td class="cell-muted tnum">${fmtDate(u.testedDate)}</td>
+      <td><div class="row-actions"><button class="icon-btn" onclick="openUatModal('${u.id}')" title="Düzenle">${ICON_EDIT}</button><button class="icon-btn" onclick="confirmAndDelete('uatCases','${u.id}','UAT senaryosu')" title="Sil">${ICON_TRASH}</button></div></td>
+    </tr>`;
+  }).join('');
+  return `<div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Kod</th><th>Hikaye</th><th>Senaryo</th><th>Durum</th><th>Test Eden</th><th>Tarih</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+}
+
+function viewTraceability(){
+  const trace = computeTraceability();
+  const rows = trace.rows.filter(x=> state.projectFilter==='all' || x.requirement.projectId===state.projectFilter);
+  setTopbar('İzlenebilirlik Matrisi', `${rows.length} gereksinim`, `${projectFilterSelect()}<button type="button" class="btn btn-ghost" onclick="exportTraceabilityCsv()">${ICON_DOWNLOAD} CSV İndir</button>`);
+  const traceBadgeCls = (s)=> s==='Tam'?'badge-good':s==='Kısmi'?'badge-warning':'badge-critical';
+  const tableRows = rows.map(x=>{
+    const r = x.requirement;
+    return `<tr>
+      <td class="cell-strong tnum">${esc(r.reqCode)}</td>
+      <td style="max-width:260px">${esc(r.title)}</td>
+      <td class="cell-muted tnum">${x.stories.length}</td>
+      <td class="cell-muted tnum">${x.acList.filter(a=>a.status==='Doğrulandı').length}/${x.acList.length}</td>
+      <td class="cell-muted tnum">${x.uatList.filter(u=>u.status==='Başarılı').length}/${x.uatList.length}</td>
+      <td class="cell-muted tnum">${x.crList.length}</td>
+      <td>${badge(x.traceStatus, traceBadgeCls(x.traceStatus))}</td>
+    </tr>`;
+  }).join('');
+  return `
+    <div class="card">
+      <div class="ring-wrap">
+        ${ring(trace.coveragePct, 'var(--good)')}
+        <div style="font-size:13px;color:var(--text-2)">
+          <div style="margin-bottom:4px"><b class="font-display" style="font-size:15px;color:var(--text)">İzlenebilirlik Kapsamı</b></div>
+          <div><b class="tnum" style="color:var(--good)">${trace.fullCount}</b> tam izlenebilir · <b class="tnum" style="color:var(--warning)">${trace.partialCount}</b> kısmi · <b class="tnum" style="color:var(--critical)">${trace.noneCount}</b> izlenemiyor</div>
+          <div class="hint mb-0">Tam: hikaye + kabul kriteri + başarılı UAT zinciri eksiksiz olan gereksinimler.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Gereksinim</th><th>Başlık</th><th>Hikaye</th><th>Kabul Kriteri</th><th>UAT</th><th>CR</th><th>İzlenebilirlik</th></tr></thead><tbody>${tableRows || '<tr><td colspan="7" class="empty-state">Kayıt yok.</td></tr>'}</tbody></table></div>
+    </div>`;
+}
+function csvEscape(v){ v=String(v==null?'':v); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
+async function downloadCsv(csv, filename){
+  if(downloadsCap){
+    try{ await downloadsCap.save({filename, data: csv}); toast('İndirme hazırlandı.'); }
+    catch(e){ if(!(e && e.code==='declined')) toast('İndirme başarısız: '+(e&&e.message||e), true); }
+  } else {
+    toast('İndirme özelliği bu görünümde kullanılamıyor.', true);
+  }
+}
+function exportTraceabilityCsv(){
+  const trace = computeTraceability();
+  const rows = trace.rows.filter(x=> state.projectFilter==='all' || x.requirement.projectId===state.projectFilter);
+  const header = ['Gereksinim Kodu','Başlık','Hikaye Sayısı','Doğrulanmış Kriter','Toplam Kriter','Başarılı UAT','Toplam UAT','CR Sayısı','İzlenebilirlik'];
+  const lines = [header.join(',')];
+  rows.forEach(x=>{
+    const r = x.requirement;
+    lines.push([r.reqCode, csvEscape(r.title), x.stories.length, x.acList.filter(a=>a.status==='Doğrulandı').length, x.acList.length, x.uatList.filter(u=>u.status==='Başarılı').length, x.uatList.length, x.crList.length, x.traceStatus].join(','));
+  });
+  downloadCsv(lines.join('\n'), 'izlenebilirlik_matrisi.csv');
+}
+
+function buildSqlTables(){
+  return {
+    projects: state.projects.map(p=>({id:p.id, code:p.code, name:p.name, client:p.client, status:p.status, priority:p.priority, methodology:p.methodology, phase:p.phase, startDate:p.startDate, endDate:p.endDate})),
+    requirements: state.requirements.map(r=>({id:r.id, reqCode:r.reqCode, projectId:r.projectId, title:r.title, type:r.type, priority:r.priority, status:r.status, owner:r.owner, createdDate:r.createdDate})),
+    userStories: state.userStories.map(u=>({id:u.id, storyCode:u.storyCode, requirementId:u.requirementId, projectId:u.projectId, epic:u.epic, priority:u.priority, points:u.points, status:u.status})),
+    acceptanceCriteria: state.acceptanceCriteria.map(a=>({id:a.id, acCode:a.acCode, userStoryId:a.userStoryId, projectId:a.projectId, status:a.status})),
+    changeRequests: state.changeRequests.map(c=>({id:c.id, crCode:c.crCode, projectId:c.projectId, title:c.title, requestedBy:c.requestedBy, impact:c.impact, status:c.status, dateSubmitted:c.dateSubmitted})),
+    uatCases: state.uatCases.map(u=>({id:u.id, tcCode:u.tcCode, userStoryId:u.userStoryId, projectId:u.projectId, title:u.title, status:u.status, testedBy:u.testedBy, testedDate:u.testedDate})),
+  };
+}
+function viewSql(){
+  setTopbar('SQL / Data', 'ERP tarzı ilişkisel sorgu konsolu', '');
+  const tables = buildSqlTables();
+  const schemaHtml = Object.keys(tables).map(t=>{
+    const cols = tables[t].length ? Object.keys(tables[t][0]) : [];
+    return `<div class="schema-table"><div class="schema-table-head">${t}</div><div class="schema-cols">${cols.map(c=>`<span class="schema-col">${esc(c)}</span>`).join('')}</div></div>`;
+  }).join('');
+  const chips = SQL_EXAMPLES.map((ex,i)=>`<button type="button" class="chip" onclick="runSqlExample(${i})">${esc(ex.label)}</button>`).join('');
+  let resultHtml = '';
+  if(state.sqlError){
+    resultHtml = `<div class="sql-error">${esc(state.sqlError)}</div>`;
+  } else if(state.sqlResult){
+    const {columns, rows} = state.sqlResult;
+    const thead = columns.map(c=>`<th>${esc(c)}</th>`).join('');
+    const tbody = rows.map(r=>`<tr>${columns.map(c=>`<td class="tnum">${esc(r[c]==null?'—':r[c])}</td>`).join('')}</tr>`).join('');
+    resultHtml = `
+      <div class="sql-result-meta"><span>${rows.length} satır</span><span>${state.sqlElapsed} ms</span><button type="button" class="link-btn" onclick="exportSqlCsv()">CSV indir</button></div>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr>${thead}</tr></thead><tbody>${tbody || `<tr><td colspan="${columns.length||1}" class="empty-state">Sonuç yok.</td></tr>`}</tbody></table></div>`;
+  }
+  return `
+    <div class="card">
+      <div class="card-title">Sorgu Konsolu</div>
+      <div class="card-sub">SELECT ... FROM ... [JOIN ... ON ...] [WHERE ...] [ORDER BY ...] [LIMIT ...] destekler.</div>
+      <div class="toolbar" style="margin-bottom:10px">${chips}</div>
+      <textarea class="input sql-editor w-full" id="sqlEditor" spellcheck="false" oninput="state.sqlQuery=this.value" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){runSqlQuery();}">${esc(state.sqlQuery)}</textarea>
+      <div class="toolbar" style="margin-top:10px"><button type="button" class="btn btn-primary" onclick="runSqlQuery()">Çalıştır</button><span class="hint mb-0">Ctrl / ⌘ + Enter</span></div>
+      ${resultHtml}
+    </div>
+    <div class="card">
+      <div class="card-title">Veri Sözlüğü</div>
+      <div class="card-sub">Sorgulanabilir tablolar ve alanlar</div>
+      <div class="schema-list">${schemaHtml}</div>
+    </div>`;
+}
+function runSqlExample(idx){ state.sqlQuery = SQL_EXAMPLES[idx].sql; runSqlQuery(); }
+function runSqlQuery(){
+  // state.sqlQuery is kept in sync with the textarea on every keystroke via
+  // its oninput handler, so it is always the source of truth here — reading
+  // the live DOM value too would let a stale rendered textarea (e.g. right
+  // after an example-chip click swaps state.sqlQuery before a re-render)
+  // silently win over the query we actually mean to run.
+  const q = state.sqlQuery;
+  const t0 = performance.now();
+  try{
+    state.sqlResult = window.MiniSQL.run(q, buildSqlTables());
+    state.sqlError = null;
+  }catch(e){
+    state.sqlResult = null;
+    state.sqlError = (e && e.message) ? e.message : String(e);
+  }
+  state.sqlElapsed = Math.max(0, Math.round((performance.now()-t0)*10)/10);
+  renderAll();
+}
+function exportSqlCsv(){
+  if(!state.sqlResult) return;
+  const {columns, rows} = state.sqlResult;
+  const lines = [columns.map(csvEscape).join(',')];
+  rows.forEach(r=> lines.push(columns.map(c=>csvEscape(r[c])).join(',')));
+  downloadCsv(lines.join('\n'), 'sorgu_sonucu.csv');
+}
+
+function viewAnalytics(){
+  setTopbar('Analitik', 'Proje, gereksinim ve kalite metrikleri', projectFilterSelect());
+  const reqs = filteredByProject(state.requirements);
+  const stories = filteredByProject(state.userStories);
+  const crs = filteredByProject(state.changeRequests);
+  const uats = filteredByProject(state.uatCases);
+  const trace = computeTraceability();
+  const traceRows = trace.rows.filter(x=> state.projectFilter==='all' || x.requirement.projectId===state.projectFilter);
+  const traceFull = traceRows.filter(x=>x.traceStatus==='Tam').length;
+  const tracePct = Math.round(traceFull/(traceRows.length||1)*100);
+
+  const reqByStatus = REQ_STATUS.map(s=>({label:s, value:reqs.filter(r=>r.status===s).length, color:reqStatusColor(s)})).filter(x=>x.value>0);
+  const pointsByStatus = STORY_STATUS.map(s=>({label:s, value:stories.filter(x=>x.status===s).reduce((a,x)=>a+(x.points||0),0), color:storyStatusColor(s)})).filter(x=>x.value>0);
+  const uatByStatus = UAT_STATUS.map(s=>({label:s, value:uats.filter(u=>u.status===s).length, color:uatStatusColor(s)})).filter(x=>x.value>0);
+  const crByImpact = CR_IMPACT.map(s=>({label:s, value:crs.filter(c=>c.impact===s).length, color: s==='Yüksek'?'var(--critical)':s==='Orta'?'var(--warning)':'var(--muted)'})).filter(x=>x.value>0);
+  const CAT_COLORS = ['var(--accent)','var(--series-2)','var(--series-3)','var(--series-4)','var(--series-5)','var(--series-6)'];
+  const reqByProject = state.projects.map((p,idx)=>({label:p.code, value: state.requirements.filter(r=>r.projectId===p.id).length, color:CAT_COLORS[idx%CAT_COLORS.length]})).filter(x=>x.value>0);
+
+  return `
+    <div class="grid-2b">
+      <div class="card"><div class="card-title">Gereksinim Durumu Dağılımı</div><div class="card-sub">${reqs.length} gereksinim</div>${barChart(reqByStatus)}</div>
+      <div class="card"><div class="card-title">Kullanıcı Hikayesi Puanı (Durum Bazında)</div><div class="card-sub">${stories.reduce((a,x)=>a+(x.points||0),0)} toplam puan</div>${barChart(pointsByStatus)}</div>
+    </div>
+    <div class="grid-2b">
+      <div class="card"><div class="card-title">UAT Sonuç Dağılımı</div><div class="card-sub">${uats.length} senaryo</div>${barChart(uatByStatus)}</div>
+      <div class="card"><div class="card-title">Değişiklik Talebi Etki Dağılımı</div><div class="card-sub">${crs.length} talep</div>${barChart(crByImpact)}</div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-title">Projeye Göre Gereksinim Sayısı</div><div class="card-sub">Aktif kapsam</div>${barChart(reqByProject)}</div>
+      <div class="card"><div class="card-title">İzlenebilirlik Kapsamı</div><div class="card-sub">Bu filtredeki gereksinimler</div>
+        <div class="ring-wrap">${ring(tracePct,'var(--good)')}<div style="font-size:12.5px;color:var(--text-2)"><b class="tnum" style="color:var(--good)">${traceFull}</b> / ${traceRows.length} gereksinim uçtan uca izlenebilir.</div></div>
+      </div>
+    </div>`;
+}
+
+/* ---------- router / sidebar / boot ---------- */
+function navigate(route){
+  state.route = route;
+  document.body.classList.remove('nav-open');
+  renderAll();
+  if(typeof window.scrollTo === 'function') window.scrollTo(0,0);
+}
+function toggleReqNav(){ state.reqNavOpen = !state.reqNavOpen; renderAll(); }
+function navItem(route, label, icon){
+  const active = state.route===route;
+  return `<button type="button" class="nav-item ${active?'active':''}" onclick="navigate('${route}')">${icon?`<span class="ico">${icon}</span>`:''}<span>${esc(label)}</span></button>`;
+}
+const REQ_SUB_ROUTES = ['req-list','user-stories','acceptance-criteria','process-flow','change-requests','uat','traceability'];
+const REQ_SUB_LABELS = {'req-list':'Genel Bakış','user-stories':'Kullanıcı Hikayeleri','acceptance-criteria':'Kabul Kriterleri','process-flow':'Süreç Akışı','change-requests':'Değişiklik Talepleri','uat':'UAT','traceability':'İzlenebilirlik Matrisi'};
+const REQ_SUB_ICONS = {'req-list':NAV_ICONS.requirements,'user-stories':NAV_ICONS.stories,'acceptance-criteria':NAV_ICONS.ac,'process-flow':NAV_ICONS.flow,'change-requests':NAV_ICONS.cr,'uat':NAV_ICONS.uat,'traceability':NAV_ICONS.trace};
+function renderSidebar(){
+  const reqActive = ROUTES[state.route] && ROUTES[state.route].group==='req';
+  return `
+    <div class="brand"><div class="brand-mark">BA</div><div class="brand-text"><b>BA · HUB</b><span>İş Analizi Merkezi</span></div></div>
+    <div class="nav-group">
+      ${navItem('dashboard','Dashboard', NAV_ICONS.dashboard)}
+      ${navItem('projects','Projeler', NAV_ICONS.projects)}
+      <button type="button" class="nav-item ${reqActive?'active':''}" onclick="toggleReqNav()">
+        <span class="ico">${NAV_ICONS.requirements}</span><span>Gereksinimler</span>
+        <span class="nav-chevron ${state.reqNavOpen?'open':''}">▸</span>
+      </button>
+      ${state.reqNavOpen ? `<div class="nav-sub">${REQ_SUB_ROUTES.map(r=>navItem(r, REQ_SUB_LABELS[r], REQ_SUB_ICONS[r])).join('')}</div>` : ''}
+      ${navItem('sql','SQL / Data', NAV_ICONS.sql)}
+      ${navItem('analytics','Analitik', NAV_ICONS.analytics)}
+    </div>
+    <div class="sidebar-foot">
+      <div><span class="db-dot ${state.dbReady?'':'off'}"></span>${state.dbReady?'Kalıcı depolama bağlı':'Yerel oturum (kalıcı değil)'}</div>
+      <div>BA HUB · Özgen Fincan</div>
+    </div>`;
+}
+const VIEW_FNS = {
+  dashboard: viewDashboard, projects: viewProjects, 'req-list': viewReqList,
+  'user-stories': viewUserStories, 'acceptance-criteria': viewAcceptanceCriteria,
+  'process-flow': viewProcessFlow, 'change-requests': viewChangeRequests,
+  uat: viewUat, traceability: viewTraceability, sql: viewSql, analytics: viewAnalytics,
+};
+function render(){
+  const fn = VIEW_FNS[state.route] || viewDashboard;
+  document.getElementById('mainContent').innerHTML = fn();
+}
+function renderAll(){
+  document.getElementById('sidebar').innerHTML = renderSidebar();
+  render();
+}
+function wireGlobalUi(){
+  document.getElementById('hamburgerBtn').addEventListener('click', ()=> document.body.classList.toggle('nav-open'));
+  document.addEventListener('click', (e)=>{
+    if(!document.body.classList.contains('nav-open')) return;
+    if(e.target.closest('#sidebar') || e.target.closest('#hamburgerBtn')) return;
+    document.body.classList.remove('nav-open');
+  });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeModal(); });
+}
+
+boot();
+</script>
