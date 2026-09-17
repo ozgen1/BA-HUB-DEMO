@@ -53,9 +53,6 @@ Bu, bir şablon veya no-code araçla değil; **sıfırdan, tek bir HTML dosyası
 - **Dışa aktarım: `downloads` capability'si.** İzlenebilirlik matrisi ve SQL sonuçları CSV olarak indirilebiliyor.
 - **Tasarım sistemi.** Renk paleti, kontrast oranı ve renk körü güvenliği doğrulanmış (Delta-E tabanlı) bir palet kullanıyor; açık/koyu tema ve mobil genişlik (~390px) tam destekli.
 
-### Neden iki sürüm var?
-
-Claude Artifacts'ın canlı veritabanı özelliği (`db` capability), tasarım gereği **organizasyon içiyle sınırlı** — yani verinin kalıcı olduğu sürüm, sadece kendi Claude organizasyonumdaki kişilerle paylaşılabiliyor. Bu depoda paylaşılan `ba-hub.html`, dış dünyaya (işe alım uzmanları, GitHub ziyaretçileri) açık, herkese açık bağlantıyla çalışan **demo sürümüdür** — aynı kod, sadece kalıcı veritabanı bağlantısı olmadan çalışıyor; her ziyaretçi kendi oturumunda örnek verilerle tam etkileşimli bir deneyim yaşıyor.
 
 ### Test yaklaşımı
 
@@ -108,7 +105,7 @@ processFlows         → projectId, steps[] ({type, label, branch})
 
 ### Nasıl geliştirildi
 
-Bu uygulama, gereksinimlerin tanımlanmasından veri modeline, arayüz tasarımından test stratejisine kadar **Claude ile birlikte, iş analistliği ve proje yöneticiliği deneyimimin yönlendirdiği bir süreçte** geliştirildi: kapsam ve bilgi mimarisi elle çizildi, veri modeli ve iş kuralları (örn. izlenebilirlik hesaplama mantığı) uçtan uca tanımlandı, geliştirme sürecinde ortaya çıkan gerçek hatalar (yukarıda anlatılan SQL bug'ı gibi) test edilip düzeltildi. Amaç, hem bir BA/PM araç setini hem de yapay zeka destekli geliştirme sürecini iş analistliği disipliniyle nasıl yönettiğimi göstermekti.
+Bu uygulama, gereksinimlerin tanımlanmasından veri modeline, arayüz tasarımından test stratejisine kadar iş analistliği ve proje yöneticiliği deneyimimin yönlendirdiği bir süreçte** geliştirildi: kapsam ve bilgi mimarisi elle çizildi, veri modeli ve iş kuralları (örn. izlenebilirlik hesaplama mantığı) uçtan uca tanımlandı, geliştirme sürecinde ortaya çıkan gerçek hatalar (yukarıda anlatılan SQL bug'ı gibi) test edilip düzeltildi. Amaç, hem bir BA/PM araç setini hem de yapay zeka destekli geliştirme sürecini iş analistliği disipliniyle nasıl yönettiğimi göstermekti.
 
 ### Sınırlamalar & sonraki adımlar
 
@@ -160,9 +157,6 @@ This wasn't built from a template or a no-code tool — it's a **single HTML fil
 - **Export: the `downloads` capability.** The traceability matrix and SQL results can be exported as CSV.
 - **Design system.** A validated (contrast-checked, color-blind-safe via Delta-E) palette; full light/dark theming and mobile support down to ~390px.
 
-### Why two versions?
-
-Claude Artifacts' live-database feature (the `db` capability) is, by design, **scoped to the owner's organization** — so the persistent version of this tool can only be shared with people inside my own Claude organization. The `ba-hub.html` shared in this repo is the **public demo build**: same code, just without the live-database connection, so it can be shared with anyone (recruiters, GitHub visitors) via a public link — each visitor gets a fully interactive session seeded with sample data.
 
 ### Testing approach
 
@@ -198,7 +192,7 @@ processFlows         → projectId, steps[] ({type, label, branch})
 
 ### How this was built
 
-This app was built **with Claude, in a process driven by my own business-analysis and project-management background**: I defined the scope and information architecture, specified the data model and business rules (including the traceability-scoring logic), and drove the testing strategy that caught and fixed real bugs (like the SQL chip issue described above) during development. The point was to demonstrate both a BA/PM toolset and how I direct AI-assisted development with the discipline of a business analyst.
+This app was built in a process driven by my own business-analysis and project-management background**: I defined the scope and information architecture, specified the data model and business rules (including the traceability-scoring logic), and drove the testing strategy that caught and fixed real bugs (like the SQL chip issue described above) during development. The point was to demonstrate both a BA/PM toolset and how I direct AI-assisted development with the discipline of a business analyst.
 
 ### Limitations & next steps
 
